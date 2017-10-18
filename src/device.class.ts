@@ -10,14 +10,13 @@ export const Device = function(window:Window) {
     if(window.DeviceOrientationEvent) {
         window.addEventListener("deviceorientation", process, false);
     } else {
-      document.body.innerHTML = 'ne supporte pas le device orientation';
+      document.getElementById("error").innerHTML += 'ne supporte pas le device orientation';
     }
 
     if(window.DeviceMotionEvent) {
-        console.log();
         window.addEventListener("devicemotion", process2, false);
     } else {
-        document.body.innerHTML = 'ne supporte pas le device motion';
+        document.getElementById("error").innerHTML += '<br />ne supporte pas le device motion';
     }
 
     function process( event ) {
@@ -28,10 +27,11 @@ export const Device = function(window:Window) {
     }
 
     function process2( event ) {
+        console.log('process2', event.accelerationIncludingGravity);
         var x = event.accelerationIncludingGravity.x;
         var y = event.accelerationIncludingGravity.y;
         var z = event.accelerationIncludingGravity.z;
-        document.getElementById("log").innerHTML = "<ul><li>X : " + x + "</li><li>Y : " + y + "</li><li>Z : " + z + "</li></ul>";
+        document.getElementById("log2").innerHTML = "<ul><li>X : " + x + "</li><li>Y : " + y + "</li><li>Z : " + z + "</li></ul>";
     }
 
 }

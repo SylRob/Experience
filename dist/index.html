@@ -18,17 +18,29 @@
         z-index: 1;
         display: block;
     }
-    #log {
+    .infosWrapper {
         position: absolute;
         z-index: 2;
         bottom: 0;
         left: 0;
         width: 100%;
     }
+    .infosWrapper > div {
+        width: 25%;
+        display: inline-block;
+    }
 </style>
 
 </head>
 
-<body><canvas id="mycanvas"></canvas><div id="log"></div><script src="js/bundle.min.js" charset="utf-8"></script></body>
+<body>
+    <canvas id="mycanvas"></canvas>
+    <div class="infosWrapper">
+        <div id="log"></div>
+        <div id="log2"></div>
+        <div id="error"></div>
+    </div>
+    <script src="js/bundle.min.js" charset="utf-8"></script>
+</body>
 
 </html>
