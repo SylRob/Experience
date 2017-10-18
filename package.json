@@ -1,0 +1,30 @@
+{
+    "name": "bluetooth-game-project",
+    "version": "0.0.1",
+    "description": "A experiment to create a game with the new chrome bluetooth API",
+    "main": "dist/index.js",
+    "scripts": {
+        "start": "node run watch",
+        "build": "NODE_ENV=production ENV_TYPE=production npm run rebuild",
+        "dev": "NODE_ENV=development ENV_TYPE=development webpack-dev-server --hot --inline --content-base dist/",
+        "rebuild": "rimraf dist/js && mkdir dist/js && webpack",
+        "clean": "rimraf dist/js",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "",
+    "license": "ISC",
+    "devDependencies": {
+        "@types/node": "latest",
+        "babel-core": "latest",
+        "babel-loader": "latest",
+        "babel-polyfill": "latest",
+        "babel-preset-es2015": "latest",
+        "ts-loader": "latest",
+        "typescript": "latest",
+        "webpack": "latest",
+        "webpack-dev-server": "latest"
+    },
+    "dependencies": {
+        "es6-promise": "latest"
+    }
+}
