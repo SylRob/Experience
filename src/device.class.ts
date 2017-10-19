@@ -82,22 +82,25 @@ export const Device = function(window:any) {
 
     function process( event ) {
 
+        const gamma = Math.round(event.gamma);
+        const beta = Math.round(event.beta);
+
         //left
         var newDataX =
-        oldGyroData.x - Math.round(event.gamma) > 0 && Math.abs(oldGyroData.x) - Math.abs(Math.round(event.gamma)) > 5 ?
+        oldGyroData.x - gamma > 0 && Math.abs(oldGyroData.x - gamma) > 5 ?
             1 :
-        oldGyroData.x - Math.round(event.gamma) < 0 && Math.abs(oldGyroData.x) - Math.abs(Math.round(event.gamma)) > 5 ?
+        oldGyroData.x - gamma < 0 && Math.abs(oldGyroData.x - gamma) > 5 ?
             -1 : 0;
 
         //top
         var newDataY =
-        oldGyroData.y - Math.round(event.beta) > 0 && Math.abs(oldGyroData.y) - Math.abs(Math.round(event.beta)) > 5 ?
+        oldGyroData.y - beta > 0 && Math.abs(oldGyroData.y - beta) > 5 ?
             1 :
-        oldGyroData.y - Math.round(event.beta) < 0 && Math.abs(oldGyroData.y) - Math.abs(Math.round(event.beta)) > 5 ?
+        oldGyroData.y - beta < 0 && Math.abs(oldGyroData.y - beta) > 5 ?
             -1 : 0;
 
-        oldGyroData.x = Math.round(event.gamma);
-        oldGyroData.y = Math.round(event.beta);
+        oldGyroData.x = gamma;
+        oldGyroData.y = beta;
 
         setNewData( newDataX, newDataY );
 
@@ -105,7 +108,8 @@ export const Device = function(window:any) {
             <li>Alpha : " + event.alpha + "</li>\
             <li>Beta : " + event.beta + "</li>\
             <li>Gamma : " + event.gamma + "</li>\
-            <li>Diff : " + (Math.abs(oldGyroData.x) - Math.abs(Math.round(event.gamma))) + ", " + (Math.abs(oldGyroData.y) - Math.abs(Math.round(event.beta))) + "</li>\
+            <li>sup : " + oldGyroData.x + ", " + oldGyroData.y + "</li>\
+            <li>Diff : " + Math.abs(oldGyroData.y - beta) + ", " + Math.abs(oldGyroData.x - gamma) + "</li>\
         </ul>";
     }
 
