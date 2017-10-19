@@ -84,16 +84,16 @@ export const Device = function(window:any) {
 
         //left
         var newDataX =
-        oldGyroData.x - Math.round(event.gamma) > 0 && Math.abs(oldGyroData.x) - Math.abs(Math.round(event.gamma)) > 10 ?
+        oldGyroData.x - Math.round(event.gamma) > 0 && Math.abs(oldGyroData.x) - Math.abs(Math.round(event.gamma)) > 5 ?
             1 :
-        oldGyroData.x - Math.round(event.gamma) && Math.abs(oldGyroData.x) - Math.abs(Math.round(event.gamma)) > 10 ?
+        oldGyroData.x - Math.round(event.gamma) < 0 && Math.abs(oldGyroData.x) - Math.abs(Math.round(event.gamma)) > 5 ?
             -1 : 0;
 
         //top
         var newDataY =
-        oldGyroData.y - Math.round(event.beta) > 0 && Math.abs(oldGyroData.y) - Math.abs(Math.round(event.beta)) > 10 ?
+        oldGyroData.y - Math.round(event.beta) > 0 && Math.abs(oldGyroData.y) - Math.abs(Math.round(event.beta)) > 5 ?
             1 :
-        oldGyroData.y - Math.round(event.beta) < 0 && Math.abs(oldGyroData.y) - Math.abs(Math.round(event.beta)) > 10 ?
+        oldGyroData.y - Math.round(event.beta) < 0 && Math.abs(oldGyroData.y) - Math.abs(Math.round(event.beta)) > 5 ?
             -1 : 0;
 
         oldGyroData.x = Math.round(event.gamma);
@@ -101,7 +101,12 @@ export const Device = function(window:any) {
 
         setNewData( newDataX, newDataY );
 
-        document.getElementById("log").innerHTML = "<ul><li>Alpha : " + event.alpha + "</li><li>Beta : " + event.beta + "</li><li>Gamma : " + event.gamma + "</li></ul>";
+        document.getElementById("log").innerHTML = "<ul>\
+            <li>Alpha : " + event.alpha + "</li>\
+            <li>Beta : " + event.beta + "</li>\
+            <li>Gamma : " + event.gamma + "</li>\
+            <li>Diff : " + (Math.abs(oldGyroData.x) - Math.abs(Math.round(event.gamma))) + ", " + (Math.abs(oldGyroData.y) - Math.abs(Math.round(event.beta))) + "</li>\
+        </ul>";
     }
 
     function process2( event ) {
