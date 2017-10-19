@@ -76,6 +76,7 @@ export const Device = function(window:any) {
         newDataY <= maxData.y && newDataY >= maxData.y*-1 ?
             data.y = newDataY : null;
 
+        document.getElementById('log3').innerHTML = "<ul><li>x : " + data.x + "</li><li>y : " + data.y + "</li></ul>";
     }
 
 
