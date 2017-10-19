@@ -13,6 +13,8 @@ export const Device = function(window:any) {
 
     let deviceType:string;
 
+    let newForceCB:Function = null;
+
     const init = (type: 'gyro' | 'keyboard') => {
         deviceType = type;
 
@@ -44,16 +46,20 @@ export const Device = function(window:any) {
 
             switch( e.keyCode ) {
                 case 38:
-                    setNewData( 0, data.x + 1 );
+                    //up
+                    setNewData( data.x, data.y - 1 );
                 break;
                 case 40:
-                    setNewData( 0, data.x - 1 );
+                    //down
+                    setNewData( data.x, data.y + 1 );
                 break;
                 case 37:
-                    setNewData( data.x - 1, 0 );
+                    //left
+                    setNewData( data.x - 1, data.y );
                 break;
                 case 39:
-                    setNewData( data.x + 1, 0 );
+                    //right
+                    setNewData( data.x + 1, data.y );
                 break;
             }
         });
@@ -71,6 +77,8 @@ export const Device = function(window:any) {
             data.y = newDataY : null;
 
         document.getElementById('log3').innerHTML = "<ul><li>x : " + data.x + "</li><li>y : " + data.y + "</li></ul>";
+
+        if(newForceCB) newForceCB(data);
     }
 
 
@@ -98,7 +106,8 @@ export const Device = function(window:any) {
     }
 
     return {
-        init: (type:'gyro' | 'keyboard') => init(type)
+        init: (type:'gyro' | 'keyboard') => init(type),
+        newPositionEvent: (cb:Function) => newForceCB = cb
     }
 
 }
