@@ -25,6 +25,7 @@
         "webpack-dev-server": "latest"
     },
     "dependencies": {
-        "es6-promise": "latest"
+        "es6-promise": "latest",
+        "gsap": "latest"
     }
 }

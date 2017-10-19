@@ -1,34 +1,34 @@
-
 import { MainController } from './mainController.class';
-
+import { Device } from './device.class';
+import { SplashScreen } from './splashScreen.class';
 
 (function(window) {
 
-/*
-    if(window.DeviceOrientationEvent) {
-        window.addEventListener("deviceorientation", process, false);
-    } else {
-      document.body.innerHTML = 'ne supporte pas le device orientation';
-    }
+    const device = Device(window);
+    const splashScreen = SplashScreen(document.body);
+    const canvasElem:HTMLCanvasElement = <HTMLCanvasElement>document.getElementById('mycanvas');
 
-    if(window.DeviceMotionEvent) {
-        window.addEventListener("devicemotion", process2, false);
-    } else {
-      document.body.innerHTML = 'ne supporte pas le device motion';
+    function resize() {
+        canvasElem.width = window.innerWidth;
+        canvasElem.height = window.innerHeight;
     }
+    window.addEventListener('resize', resize);
+    resize();
 
-    function process( event ) {
-        var alpha = event.alpha;
-        var beta = event.beta;
-        var gamma = event.gamma;
-        document.getElementById("log").innerHTML = "<ul><li>Alpha : " + alpha + "</li><li>Beta : " + beta + "</li><li>Gamma : " + gamma + "</li></ul>";
-    }
-    function process2( event ) {
-        var x = event.accelerationIncludingGravity.x;
-        var y = event.accelerationIncludingGravity.y;
-        var z = event.accelerationIncludingGravity.z;
-        document.getElementById("log").innerHTML = "<ul><li>X : " + x + "</li><li>Y : " + y + "</li><li>Z : " + z + "</li></ul>";
-    }
-*/
-    MainController( <HTMLCanvasElement>document.getElementById('mycanvas'), window );
+    splashScreen.detectDevice()
+    .then((value)=> {
+        console.log('return value ' + value);
+        splashScreen.toFade();
+
+        const type =
+        value == 'touch' ?
+            'gyro' :
+        value == 'click' ?
+            'keyboard' :
+            null;
+
+        device.init( type );
+        MainController( canvasElem.getContext("2d"), window, device );
+    });
+
 })(window)

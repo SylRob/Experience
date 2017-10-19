@@ -1,20 +1,15 @@
 import { Avatar } from './avatar.class';
-import { Device } from './device.class';
 
 
+export const MainController = function( canv:CanvasRenderingContext2D, window:any, device ) {
 
-export const MainController = function( canvas:HTMLCanvasElement, window:any ) {
-
-    const canvasElem:HTMLCanvasElement = canvas;
-    const ctx:CanvasRenderingContext2D = canvasElem.getContext("2d");
+    const ctx:CanvasRenderingContext2D = canv;
     const avatar = Avatar({
         ctx:ctx,
         position: { x:50, y:50 }
     });
-    const device = Device(window);
 
     function init(){
-        resize();
         events();
         window.requestAnimationFrame(draw);
     }
@@ -22,13 +17,9 @@ export const MainController = function( canvas:HTMLCanvasElement, window:any ) {
     init();
 
     function events() {
-        window.addEventListener('resize', resize);
     }
 
-    function resize() {
-        canvasElem.width = window.innerWidth;
-        canvasElem.height = window.innerHeight;
-    }
+
 
     function draw() {
 
