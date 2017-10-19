@@ -76,8 +76,8 @@ export const Device = function(window:any) {
 
     function process( event ) {
 
-        const gamma = Math.round(event.gamma/5);
-        const beta = Math.round(event.beta/5);
+        const gamma = Math.round(event.gamma/5) > 0 ? 1 : -1;
+        const beta = Math.round(event.beta/5) > 0 ? 1 : -1;
 
         setNewData( gamma, beta );
 
