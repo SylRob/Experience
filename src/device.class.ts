@@ -84,17 +84,20 @@ export const Device = function(window:any) {
 
         //left
         var newDataX =
-        oldGyroData.x - event.gamma > 0 ?
+        oldGyroData.x - Math.round(event.gamma) > 0 && Math.abs(oldGyroData.x) - Math.abs(Math.round(event.gamma)) > 10 ?
             1 :
-        oldGyroData.x - event.gamma < 0 ?
+        oldGyroData.x - Math.round(event.gamma) && Math.abs(oldGyroData.x) - Math.abs(Math.round(event.gamma)) > 10 ?
             -1 : 0;
 
         //top
         var newDataY =
-        oldGyroData.y - event.beta > 0 ?
+        oldGyroData.y - Math.round(event.beta) > 0 && Math.abs(oldGyroData.y) - Math.abs(Math.round(event.beta)) > 10 ?
             1 :
-        oldGyroData.y - event.beta < 0 ?
+        oldGyroData.y - Math.round(event.beta) < 0 && Math.abs(oldGyroData.y) - Math.abs(Math.round(event.beta)) > 10 ?
             -1 : 0;
+
+        oldGyroData.x = Math.round(event.gamma);
+        oldGyroData.y = Math.round(event.beta);
 
         setNewData( newDataX, newDataY );
 
