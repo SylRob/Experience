@@ -44,16 +44,16 @@ export const Device = function(window:any) {
 
             switch( e.keyCode ) {
                 case 38:
-                    setNewData( 0, 1 );
+                    setNewData( 0, data.x + 1 );
                 break;
                 case 40:
-                    setNewData( 0, -1 );
+                    setNewData( 0, data.x - 1 );
                 break;
                 case 37:
-                    setNewData( -1, 0 );
+                    setNewData( data.x - 1, 0 );
                 break;
                 case 39:
-                    setNewData( 1, 0 );
+                    setNewData( data.x + 1, 0 );
                 break;
             }
         });
@@ -62,8 +62,8 @@ export const Device = function(window:any) {
 
     const setNewData = ( x, y ) => {
 
-        const newDataX = data.x + x;
-        const newDataY = data.y + y;
+        const newDataX = x;
+        const newDataY = y;
 
         newDataX <= maxData.x && newDataX >= maxData.x*-1 ?
             data.x = newDataX : null;
@@ -76,8 +76,8 @@ export const Device = function(window:any) {
 
     function process( event ) {
 
-        const gamma = Math.round(event.gamma/5) > 0 ? 1 : -1;
-        const beta = Math.round(event.beta/5) > 0 ? 1 : -1;
+        const gamma = Math.round(event.gamma/5);
+        const beta = Math.round(event.beta/5);
 
         setNewData( gamma, beta );
 
