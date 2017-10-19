@@ -18,6 +18,7 @@ export const MainController = function( canv:CanvasRenderingContext2D, window:an
 
     function events() {
         device.newPositionEvent((data) => {
+            console.log('MainController CB');
             avatar.setPowerToPosition( data );
         })
     }

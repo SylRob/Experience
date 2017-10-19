@@ -78,6 +78,7 @@ export const Device = function(window:any) {
 
         document.getElementById('log3').innerHTML = "<ul><li>x : " + data.x + "</li><li>y : " + data.y + "</li></ul>";
 
+        console.log( 'setNew data', newForceCB );
         if(newForceCB) newForceCB(data);
     }
 

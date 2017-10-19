@@ -1,5 +1,5 @@
 {
-    "name": "bluetooth-game-project",
+    "name": "Giroscope-game-project",
     "version": "0.0.1",
     "description": "A experiment to create a game with the new chrome bluetooth API",
     "main": "dist/index.js",

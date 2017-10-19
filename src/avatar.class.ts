@@ -21,6 +21,7 @@ export const Avatar = function( param:IAvatarParam ) {
     const draw = (ctx:CanvasRenderingContext2D, position:IAvatarParam['position']) => {
         ctx.clearRect(0,0,ctx.canvas.clientWidth,ctx.canvas.clientHeight);
         ctx.beginPath();
+        console.log( 'drawing', position.x,position.y );
         ctx.arc(position.x,position.y,circleR,0,2*Math.PI);
         ctx.fillStyle="#FF0000";
         ctx.fill();
@@ -35,18 +36,20 @@ export const Avatar = function( param:IAvatarParam ) {
         let newY = position.y + powerPosition.y*speedForceBase;
 
         let newPosition = {
-            x: newX > sizeWidth-circleR ?
-                sizeWidth-circleR :
-            newX > circleR ?
-                newX : circleR,
-            y: newY > sizeHeight-circleR ?
-                sizeHeight-circleR :
-            newY > circleR ?
-                newY : circleR
+            x:  newX > sizeWidth-circleR ?
+                    sizeWidth-circleR :
+                newX > circleR ?
+                    newX : circleR,
+            y:  newY > sizeHeight-circleR ?
+                    sizeHeight-circleR :
+                newY > circleR ?
+                    newY : circleR
         }
 
         position = newPosition;
         positionIsDirty = true;
+
+        console.log( 'setPowerToPosition' );
     }
 
     return {
