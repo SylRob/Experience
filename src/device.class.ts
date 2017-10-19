@@ -7,9 +7,9 @@ export const Device = function(window:any) {
     }
 
     let oldGyroData = {
-        x: null,
-        y: null,
-        z: null
+        x: 0,
+        y: 0,
+        z: 0
     }
 
     let data = {
@@ -81,23 +81,27 @@ export const Device = function(window:any) {
 
     function process( event ) {
 
-        if( !oldGyroData.z ) {
-            oldGyroData.z = event.alpha;
-            oldGyroData.x = event.beta;
-            oldGyroData.y = event.gamma;
-            return ;
-        }
+        //left
+        var newDataX =
+        oldGyroData.x - event.gamma > 0 ?
+            1 :
+        oldGyroData.x - event.gamma < 0 ?
+            -1 : 0;
+
+        //top
+        var newDataY =
+        oldGyroData.y - event.beta > 0 ?
+            1 :
+        oldGyroData.y - event.beta < 0 ?
+            -1 : 0;
+
+        setNewData( newDataX, newDataY );
 
         document.getElementById("log").innerHTML = "<ul><li>Alpha : " + event.alpha + "</li><li>Beta : " + event.beta + "</li><li>Gamma : " + event.gamma + "</li></ul>";
     }
 
     function process2( event ) {
-        if( !oldGyroData.z ) {
-            oldGyroData.z = event.accelerationIncludingGravity.z;
-            oldGyroData.x = event.accelerationIncludingGravity.x;
-            oldGyroData.y = event.accelerationIncludingGravity.y;
-            return ;
-        }
+
         var x = event.accelerationIncludingGravity.x;
         var y = event.accelerationIncludingGravity.y;
         var z = event.accelerationIncludingGravity.z;
