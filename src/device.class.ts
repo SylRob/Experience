@@ -77,8 +77,7 @@ export const Device = function(window:any) {
             data.y = newDataY : null;
 
         document.getElementById('log3').innerHTML = "<ul><li>x : " + data.x + "</li><li>y : " + data.y + "</li></ul>";
-
-        console.log( 'setNew data', newForceCB );
+        
         if(newForceCB) newForceCB(data);
     }
 
@@ -100,9 +99,9 @@ export const Device = function(window:any) {
 
     function process2( event ) {
 
-        var x = event.accelerationIncludingGravity.x;
-        var y = event.accelerationIncludingGravity.y;
-        var z = event.accelerationIncludingGravity.z;
+        let x = event.accelerationIncludingGravity.x;
+        let y = event.accelerationIncludingGravity.y;
+        let z = event.accelerationIncludingGravity.z;
         document.getElementById("log2").innerHTML = "<ul><li>X : " + x + "</li><li>Y : " + y + "</li><li>Z : " + z + "</li></ul>";
     }
 

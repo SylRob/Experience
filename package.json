@@ -4,7 +4,7 @@
     "description": "A experiment to create a game with the new chrome bluetooth API",
     "main": "dist/index.js",
     "scripts": {
-        "start": "node run watch",
+        "start": "node run dev",
         "build": "NODE_ENV=production ENV_TYPE=production npm run rebuild",
         "dev": "NODE_ENV=development ENV_TYPE=development webpack-dev-server --hot --inline --content-base dist/",
         "rebuild": "rimraf dist/js && mkdir dist/js && webpack",
@@ -26,6 +26,7 @@
     },
     "dependencies": {
         "es6-promise": "latest",
-        "gsap": "latest"
+        "gsap": "latest",
+        "matter-js": "latest"
     }
 }

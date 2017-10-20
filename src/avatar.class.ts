@@ -1,7 +1,9 @@
+import { Bodies, World, Body } from 'matter-js';
+
 interface IAvatarParam {
 
     ctx:CanvasRenderingContext2D;
-    position: { x:number, y:number };
+    position: { x:number, y:number }
 
 }
 
@@ -17,14 +19,17 @@ export const Avatar = function( param:IAvatarParam ) {
         y: 0
     }
     let speedForceBase = 1;
+    let world;
+    let body;
+
+    const init = () => {
+        body = Bodies.circle(position.x, position.y, circleR, { render: { fillStyle: '#000000' } });
+        World.add( world, [body] );
+    }
 
     const draw = (ctx:CanvasRenderingContext2D, position:IAvatarParam['position']) => {
-        ctx.clearRect(0,0,ctx.canvas.clientWidth,ctx.canvas.clientHeight);
-        ctx.beginPath();
-        console.log( 'drawing', position.x,position.y );
-        ctx.arc(position.x,position.y,circleR,0,2*Math.PI);
-        ctx.fillStyle="#FF0000";
-        ctx.fill();
+
+        //Body.setPosition(body, position);
         positionIsDirty = false;
     }
 
@@ -39,23 +44,26 @@ export const Avatar = function( param:IAvatarParam ) {
             x:  newX > sizeWidth-circleR ?
                     sizeWidth-circleR :
                 newX > circleR ?
-                    newX : circleR,
+                    newX :
+                    circleR,
             y:  newY > sizeHeight-circleR ?
                     sizeHeight-circleR :
                 newY > circleR ?
-                    newY : circleR
+                    newY :
+                    circleR
         }
 
         position = newPosition;
         positionIsDirty = true;
 
-        console.log( 'setPowerToPosition' );
     }
 
     return {
+        init:()=>init(),
         setPowerToPosition: (pos) => setPowerToPosition(pos),
         getPosition: () => position,
         draw: () => draw(ctx, position),
+        setWorld: (w)=>{ world = w; console.log(world); },
         isPositionDirty: positionIsDirty
     }
 

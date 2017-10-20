@@ -17,7 +17,6 @@ import { SplashScreen } from './splashScreen.class';
 
     splashScreen.detectDevice()
     .then((value)=> {
-        console.log('return value ' + value);
         splashScreen.toFade();
 
         const type =
