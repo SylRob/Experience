@@ -2,8 +2,8 @@
 export const Device = function(window:any) {
 
     const maxData = {
-        x: 10,// -10 & +10
-        y: 10// -10 & +10
+        x: 1,// -1 & +1
+        y: 1// -1 & +1
     }
 
     let data = {
@@ -47,19 +47,19 @@ export const Device = function(window:any) {
             switch( e.keyCode ) {
                 case 38:
                     //up
-                    setNewData( data.x, data.y - 1 );
+                    setNewData( data.x, +Number(data.y - 0.1).toFixed(1) );
                 break;
                 case 40:
                     //down
-                    setNewData( data.x, data.y + 1 );
+                    setNewData( data.x, +Number(data.y + 0.1).toFixed(1) );
                 break;
                 case 37:
                     //left
-                    setNewData( data.x - 1, data.y );
+                    setNewData( +Number(data.x - 0.1).toFixed(1), data.y );
                 break;
                 case 39:
                     //right
-                    setNewData( data.x + 1, data.y );
+                    setNewData( +Number(data.x + 0.1).toFixed(1), data.y );
                 break;
             }
         });
@@ -72,20 +72,20 @@ export const Device = function(window:any) {
         const newDataY = y;
 
         newDataX <= maxData.x && newDataX >= maxData.x*-1 ?
-            data.x = newDataX : null;
+            data.x = newDataX : 0;
         newDataY <= maxData.y && newDataY >= maxData.y*-1 ?
-            data.y = newDataY : null;
+            data.y = newDataY : 0;
 
         document.getElementById('log3').innerHTML = "<ul><li>x : " + data.x + "</li><li>y : " + data.y + "</li></ul>";
-        
+
         if(newForceCB) newForceCB(data);
     }
 
 
     function process( event ) {
 
-        const gamma = Math.round(event.gamma/5);
-        const beta = Math.round(event.beta/5);
+        const gamma = Number(event.gamma/15).toFixed(1);
+        const beta = Number(event.beta/15).toFixed(1);
 
         setNewData( gamma, beta );
 

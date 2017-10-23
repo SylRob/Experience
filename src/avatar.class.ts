@@ -63,7 +63,7 @@ export const Avatar = function( param:IAvatarParam ) {
         setPowerToPosition: (pos) => setPowerToPosition(pos),
         getPosition: () => position,
         draw: () => draw(ctx, position),
-        setWorld: (w)=>{ world = w; console.log(world); },
+        setWorld: (w)=>world = w,
         isPositionDirty: positionIsDirty
     }
 
