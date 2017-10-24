@@ -36,21 +36,17 @@ export const MainController = function( canv:CanvasRenderingContext2D, window:an
     function events() {
         device.newPositionEvent( (data)=> scene.setGravity( data ) );
 
-        if( device.isTouch() ) {
-
-            try {
-                ctx.canvas.webkitRequestFullScreen();
-            }
-            catch(err) {
-            }
-
-            try {
-                ctx.canvas.requestFullscreen();
-            }
-            catch(err) {
-            }
+        try {
+            ctx.canvas.webkitRequestFullScreen();
+        }
+        catch(err) {
         }
 
+        try {
+            ctx.canvas.requestFullscreen();
+        }
+        catch(err) {
+        }
         ["fullscreenchange", "webkitfullscreenchange", "mozfullscreenchange", "msfullscreenchange", "resize"].forEach(
             eventName => document.addEventListener(eventName, resize, false)
         );
