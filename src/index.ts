@@ -8,13 +8,6 @@ import { SplashScreen } from './splashScreen.class';
     const splashScreen = SplashScreen(document.body);
     const canvasElem:HTMLCanvasElement = <HTMLCanvasElement>document.getElementById('mycanvas');
 
-    function resize() {
-        canvasElem.width = window.innerWidth;
-        canvasElem.height = window.innerHeight;
-    }
-    window.addEventListener('resize', resize);
-    resize();
-
     splashScreen.detectDevice()
     .then((value)=> {
         splashScreen.toFade();

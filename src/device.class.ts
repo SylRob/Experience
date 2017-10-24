@@ -107,7 +107,8 @@ export const Device = function(window:any) {
 
     return {
         init: (type:'gyro' | 'keyboard') => init(type),
-        newPositionEvent: (cb:Function) => newForceCB = cb
+        newPositionEvent: (cb:Function) => newForceCB = cb,
+        isTouch: ()=>deviceType === 'gyro'
     }
 
 }
