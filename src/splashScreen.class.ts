@@ -18,7 +18,9 @@ export const SplashScreen = function(parent:HTMLElement) {
         width: 100vw;\
         height: 100vh;\
         background-color:#8f45b5;\
-        line-height: 100vh;\
+        display: flex;\
+        justify-content: center;\
+        flex-direction: column;\
         text-align: center;\
         color: #FFFFFF;\
         z-index: 50;\
