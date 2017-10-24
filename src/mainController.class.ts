@@ -67,19 +67,18 @@ export const MainController = function( canv:CanvasRenderingContext2D, window:an
 
         document.body.appendChild( button );
 
-        button.addEventListener('touchstart', ()=>{
-            try {
-                ctx.canvas.webkitRequestFullScreen();
-            }
-            catch(err) {
-            }
+        button.addEventListener('touchstart', fullScreen);
+        button.addEventListener('click', fullScreen);
+    }
 
-            try {
-                ctx.canvas.requestFullscreen();
-            }
-            catch(err) {
-            }
-        });
+    function fullScreen() {
+        var canvas = <any>document.getElementById(canv.canvas.getAttribute('id'));
+        if(canvas.requestFullScreen)
+            canvas.requestFullScreen();
+        else if(canvas.webkitRequestFullScreen)
+            canvas.webkitRequestFullScreen();
+        else if(canvas.mozRequestFullScreen)
+            canvas.mozRequestFullScreen();
     }
 
 }
