@@ -8,7 +8,7 @@ export const MainController = function( canv:CanvasRenderingContext2D, window:an
     const ctx:CanvasRenderingContext2D = canv,
           avatar = Avatar({
               ctx:ctx,
-              position: { x:50, y:50 }
+              position: { x:25, y:25 }
           }),
           maze = Maze();
 
@@ -37,8 +37,18 @@ export const MainController = function( canv:CanvasRenderingContext2D, window:an
         device.newPositionEvent( (data)=> scene.setGravity( data ) );
 
         if( device.isTouch() ) {
-            ctx.canvas.webkitRequestFullScreen();
-            ctx.canvas.requestFullscreen();
+
+            try {
+                ctx.canvas.webkitRequestFullScreen();
+            }
+            catch(err) {
+            }
+
+            try {
+                ctx.canvas.requestFullscreen();
+            }
+            catch(err) {
+            }
         }
 
         ["fullscreenchange", "webkitfullscreenchange", "mozfullscreenchange", "msfullscreenchange", "resize"].forEach(
