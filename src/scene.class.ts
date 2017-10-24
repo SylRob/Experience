@@ -28,6 +28,10 @@ export const Scene = function() {
 
         Render.run(render);
         Runner.run(runner, engine);
+
+        gravity.x = 0;
+        gravity.y = 0;
+
         addWalls();
     }
 
@@ -46,7 +50,6 @@ export const Scene = function() {
     }
 
     const addToWorld = ( bodies:Array<Bodies> ) => {
-        console.log('addToWorld', bodies);
         World.add(world, bodies);
     }
 

@@ -45,12 +45,10 @@ export const Maze = () => {
 
         let nextSerial = mutateCells( tblVal.serial, cardRand );
 
-        if( tblVal.serial > 0 && tblVal.serial < col ) console.log( cardinal, cardRand, tblVal.serial, filteredTbl[tblInd], tblVal );
-
         filteredTbl.splice( tblInd, 1 );
         filteredTbl.indexOf( nextSerial ) != -1 ? filteredTbl.splice( filteredTbl.indexOf( nextSerial ), 1 ) : null;
 
-        if( filteredTbl.length == 0 ) { console.log(tbl); return walls;}
+        if( filteredTbl.length == 0 ) { return walls;}
         else return generateMaze( filteredTbl );
     }// generateMaze
 
