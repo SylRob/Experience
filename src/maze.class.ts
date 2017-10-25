@@ -13,11 +13,12 @@ export const Maze = () => {
 
     const init = (r:number, w:number, h:number) => {
 
-        mazeW = w,
-        mazeH = h,
+        mazeW = w;
+        mazeH = h;
         fullRad = (r*2) + 10;
         col = Math.floor(mazeW/fullRad),
         row = Math.floor(mazeH/fullRad);
+        walls = new Array();
 
         let toRow = 0;
         for (let i = 0; i < (col*row)-1; i++) {

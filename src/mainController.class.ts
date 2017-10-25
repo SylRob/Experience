@@ -8,7 +8,7 @@ export const MainController = function( canv:CanvasRenderingContext2D, window:an
     const ctx:CanvasRenderingContext2D = canv,
           avatar = Avatar({
               ctx:ctx,
-              position: { x:25, y:25 }
+              position: { x:0, y:0 }
           }),
           maze = Maze();
 
@@ -21,14 +21,8 @@ export const MainController = function( canv:CanvasRenderingContext2D, window:an
     function init() {
         events();
         goToFullScreen();
+        resStart();
 
-        scene.init( ctx );
-        avatar.init();
-        maze.init( avatar.getAvatarRadius(), ctx.canvas.width, ctx.canvas.height );
-
-
-        scene.addAvatar( avatar.getBody() );
-        scene.addToWorld( maze.generateMaze() );
         //window.requestAnimationFrame(draw);
     }
     //auto load
@@ -42,7 +36,20 @@ export const MainController = function( canv:CanvasRenderingContext2D, window:an
         );
     }
 
-    function resize() {
+    function resStart() {
+
+        scene.destroy();
+        scene.init( ctx );
+        avatar.init();
+        maze.init( avatar.getAvatarRadius(), ctx.canvas.width, ctx.canvas.height );
+
+
+        scene.addAvatar( avatar.getBody() );
+        scene.addToWorld( maze.generateMaze() );
+    }
+
+    function resize(event:Event) {
+        resStart();
     }
 
 

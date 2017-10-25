@@ -2,17 +2,23 @@ import { Engine, Render, Runner, Composites, Common, MouseConstraint, Mouse, Wor
 
 
 export const Scene = function() {
-    let ctx:CanvasRenderingContext2D;
 
-    const engine = Engine.create(),
-          world = engine.world;
-    let   avatar:Bodies,
-          gravity = world.gravity;
+    let   ctx:CanvasRenderingContext2D,
+          engine:Engine,
+          world:World,
+          avatar:Bodies,
+          gravity;
 
     const init = ( canv:CanvasRenderingContext2D ) => {
 
         // create engine
         ctx = canv;
+
+        engine = Engine.create();
+        world = engine.world;
+        gravity = world.gravity;
+
+        console.log( 'init', ctx.canvas.width, ctx.canvas.height, window.innerWidth, window.innerHeight );
 
         const render = Render.create({
             canvas: ctx.canvas,
@@ -20,7 +26,9 @@ export const Scene = function() {
             options: {
                 showAngleIndicator: true,
                 background: '#000000',
-                wireframes: false
+                wireframes: false,
+                width: window.innerWidth,
+                height: window.innerHeight
             }
         }),
         // create runner
@@ -58,12 +66,24 @@ export const Scene = function() {
         gravity.y = data.y;
     }
 
+    const destroy = () => {
+        if( engine ) {
+
+            engine.world.bodies.map((body)=>{
+                World.remove(engine.world, body);
+            })
+            World.clear(engine.world);
+            Engine.clear(engine);
+        }
+    }
+
     return {
         init: (ctx) => init(ctx),
         getWorld: () => world,
         setGravity: (data:{x:number, y:number})=>setGravity(data, world, gravity),
         addToWorld: (b)=>addToWorld(b),
-        addAvatar: (a)=>addAvatar(a)
+        addAvatar: (a)=>addAvatar(a),
+        destroy: ()=>destroy()
     }
 
 

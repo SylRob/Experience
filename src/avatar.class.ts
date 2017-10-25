@@ -13,7 +13,7 @@ export const Avatar = function( param:IAvatarParam ) {
     const ctx:CanvasRenderingContext2D = param.ctx;
 
     let position:IAvatarParam['position'] = param.position,
-        circleR = 20,
+        circleR = 10,
         positionIsDirty:boolean = true,
         force:IAvatarParam['position'] = {
             x: 0,
@@ -24,7 +24,7 @@ export const Avatar = function( param:IAvatarParam ) {
         body;
 
     const init = () => {
-        body = Bodies.circle(position.x, position.y, circleR, { render: { fillStyle: '#FFFFFF' } });
+        body = Bodies.circle(position.x + (circleR/2), position.y + (circleR/2), circleR, { render: { fillStyle: '#FFFFFF' } });
     }
 
     return {
