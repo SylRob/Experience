@@ -18,8 +18,6 @@ export const Scene = function() {
         world = engine.world;
         gravity = world.gravity;
 
-        console.log( 'init', ctx.canvas.width, ctx.canvas.height, window.innerWidth, window.innerHeight );
-
         const render = Render.create({
             canvas: ctx.canvas,
             engine: engine,

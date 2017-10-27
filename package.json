@@ -1,7 +1,7 @@
 {
-    "name": "Giroscope-game-project",
+    "name": "Gyroscope-game-project",
     "version": "0.0.1",
-    "description": "A experiment to create a game with the new chrome bluetooth API",
+    "description": "A experiment to create a game with the Gyroscope and by using Fonctional programming",
     "main": "dist/index.js",
     "scripts": {
         "start": "node run dev",
