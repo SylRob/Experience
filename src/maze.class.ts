@@ -18,11 +18,9 @@ export const Maze = () => {
         fullRad = (r*2) + 10;
         col = Math.floor(mazeW/fullRad),
         row = Math.floor(mazeH/fullRad);
-        walls = new Array();
 
-        console.log( 'col/row', col, row, fullRad );
         let toRow = 0;
-        for (let i = 0; i < (col*row)-1; i++) {
+        for (let i = 0; i < (col*row); i++) {
 
             tbl.push({
                 serial: i,
@@ -39,38 +37,48 @@ export const Maze = () => {
     }
 
 
-    const generateMaze = ( filteredTbl:Array<number> ) => {
+    const generateMaze = ( filteredTbl:Array<number> ):Promise<any> => {
+        return new Promise( (resolve, reject) => {
+            //const tblInd = 0,
+            const tblInd = Math.floor(Math.random() * filteredTbl.length),
+                  tblVal = tbl[filteredTbl[tblInd]],
+                  cardinalRand = filterCardinalArr( tblVal );
 
-        //const tblInd = 0,
-        const tblInd = Math.floor(Math.random() * filteredTbl.length),
-              tblVal = tbl[filteredTbl[tblInd]],
-              cardinalRand = filterCardinalArr( tblVal );
+            mutateCells( tblVal.serial, tblVal.mutateId, cardinalRand );
 
-        mutateCells( tblVal.serial, tblVal.mutateId, cardinalRand );
+            filteredTbl.splice( tblInd, 1 );
 
-        filteredTbl.splice( tblInd, 1 );
+            if( filteredTbl.length == 0 ) {
 
-        if( filteredTbl.length == 0 ){
-            console.log( tbl );
-            return getWall(walls);
-        }
-        else return generateMaze( filteredTbl );
+                if( finalLoops() ) { console.log( tbl ) ;walls = getWall(walls); }
+
+                return resolve();
+            }
+            else return generateMaze( filteredTbl );
+        });//end of promise
     }// generateMaze
 
     function getWall( arr:Array<Bodies> ) {
+
         tbl.map( (line) => {
             let pos = line.wallBody;
 
-            if( line.wallCard.indexOf('n') != -1 )
-                arr.push( Bodies.rectangle( (pos.col*fullRad) + (fullRad/2), (pos.row*fullRad) - 1, fullRad, 2, { isStatic: true, render:{ fillStyle: '#FFFFFF' } }) );
-            if( line.wallCard.indexOf('w') != -1 )
-                arr.push( Bodies.rectangle( (pos.col*fullRad) - 1, (pos.row*fullRad) + (fullRad/2), 2, fullRad, { isStatic: true, render:{ fillStyle: '#FFFFFF' } }) );
-            if( line.wallCard.indexOf('s') != -1 )
-                arr.push( Bodies.rectangle( (pos.col*fullRad) + (fullRad/2), ((pos.row+1)*fullRad) - 1, fullRad, 2, { isStatic: true, render:{ fillStyle: '#FF0000' } }) );
-            if( line.wallCard.indexOf('e') != -1 )
-                arr.push( Bodies.rectangle( ((pos.col+1)*fullRad) - 1, (pos.row*fullRad) + (fullRad/2), 2, fullRad, { isStatic: true, render:{ fillStyle: '#00FFFF' } }) );
+            if( line.serial == tbl.length - 1 ) console.log( 'final last line', line, line.wallCard.indexOf('s') != -1 );
 
-        })
+            if( line.wallCard.indexOf('n') != -1 ) {
+                arr.push( Bodies.rectangle( (pos.col*fullRad) + (fullRad/2), (pos.row*fullRad) - 1, fullRad, 2, { isStatic: true, render:{ fillStyle: '#00FFFF' } }) );
+            }
+            if( line.wallCard.indexOf('w') != -1 ) {
+                arr.push( Bodies.rectangle( (pos.col*fullRad) - 1, (pos.row*fullRad) + (fullRad/2), 2, fullRad, { isStatic: true, render:{ fillStyle: '#00FFFF' } }) );
+            }
+            if( line.wallCard.indexOf('s') != -1 ) {
+                arr.push( Bodies.rectangle( (pos.col*fullRad) + (fullRad/2), ((pos.row+1)*fullRad) - 1, fullRad, 2, { isStatic: true, render:{ fillStyle: '#00FFFF' } }) );
+            }
+            if( line.wallCard.indexOf('e') != -1 ) {
+                arr.push( Bodies.rectangle( ((pos.col+1)*fullRad) - 1, (pos.row*fullRad) + (fullRad/2), 2, fullRad, { isStatic: true, render:{ fillStyle: '#00FFFF' } }) );
+            }
+
+        });
 
         return arr;
     }// getWall
@@ -78,26 +86,31 @@ export const Maze = () => {
     function filterCardinalArr( line ) {
         let serial = line.serial,
             allowCard = new Array(),
+            walls = new Array(),
             otherLine,
             res;
 
-        ['n', 'w', 's', 'e'].map((card)=>{
+        ['n', 'w', 's', 'e'].map((card) => {
             switch(card) {
                 case 'n':
-                    otherLine = tbl[ serial - col ];
+                    otherLine = tbl[ serial - col ] ? tbl[ serial - col ] : null;
                     if( otherLine && ( otherLine.mutateId != line.mutateId || !otherLine.generated ) ) allowCard.push('n');
+                    else if( !otherLine ) walls.push('n');
                 break;
                 case 'w':
-                    otherLine = serial % col !== 0 ? tbl[ serial - 1 ]: false;
+                    otherLine = serial % col !== 0 ? tbl[ serial - 1 ] : null;
                     if( otherLine && ( otherLine.mutateId != line.mutateId || !otherLine.generated ) ) allowCard.push('w');
+                    else if( !otherLine ) walls.push('w');
                 break;
                 case 's':
-                    otherLine = tbl[ serial + col ];
+                    otherLine = tbl[ serial + col ] ? tbl[ serial + col ] : null;
                     if( otherLine && ( otherLine.mutateId != line.mutateId || !otherLine.generated ) ) allowCard.push('s');
+                    else if( !otherLine ) walls.push('s');
                 break;
                 case 'e':
-                    otherLine = (serial + 1) % col !== 0 || serial == 0 ? tbl[ serial + 1 ]: false;
+                    otherLine = (serial + 1) % col !== 0 || serial == 0 ? tbl[ serial + 1 ] : null;
                     if( otherLine && ( otherLine.mutateId != line.mutateId || !otherLine.generated ) ) allowCard.push('e');
+                    else if( !otherLine ) walls.push('e');
                 break;
             }
         });
@@ -107,12 +120,14 @@ export const Maze = () => {
         let rand = Math.floor(Math.random() * allowCard.length);
         res = allowCard[rand];
 
+        if( serial == tbl.length - 1 ) console.log( serial, line, res, tbl[ serial + col ], (serial + 1) % col );
+
         allowCard.splice( rand, 1 );
 
         line.wallCard = allowCard;
 
-        console.log( 'new filter arr', serial, tbl[serial] );
-
+        //add walls if any
+        if( walls.length > 0 ) line.wallCard.push(...walls);
         return res;
     }
 
@@ -144,27 +159,46 @@ export const Maze = () => {
             break;
         }
 
-        console.log( 'mutate cells', cardinal, serial, mutateId, toMutate, nextSerial );
-        var founded = false;
+        if( nextSerial == tbl.length - 1 ) console.log( 'last mutate', oposite );
+
         tbl = tbl.map((obj)=>{
-            if( obj.mutateId == toMutate ) obj.mutateId = mutateId;
+            if( obj.mutateId == toMutate ) { obj.mutateId = mutateId; }
             if( obj.serial == nextSerial && obj.wallCard.indexOf(oposite) != -1 ) {
                 obj.wallCard.splice( obj.wallCard.indexOf(oposite), 1 );
-                founded = true;
-                console.log( 'fouuunnndede', obj.wallCard );
             }
 
             return obj;
 
         });
 
-        if( founded ) console.log( 'final Arr', tbl[nextSerial] );
+    }
+
+    function finalLoops() {
+        let isUnique = false,
+            arr = new Array(),
+            initModif = -1,
+            targetedSerial = -1;
+
+        tbl.map(( line )=> {
+
+            if( initModif == -1 ) initModif = line.mutateId;
+            else if( initModif != line.mutateId && targetedSerial == -1 ) {
+                targetedSerial = line.serial;
+                arr.push( line.serial );
+            } else if( targetedSerial == line.mutateId ) {
+                arr.push( line.serial );
+            }
+
+        })
+
+        if( arr.length > 0 ){ generateMaze( arr ); }
+        else return true;
 
     }
 
     return {
         init: (r, w, h)=>init(r, w, h),
-        generateMaze: ()=>generateMaze(filterTbl)
+        generateMaze: ()=> { generateMaze(filterTbl); return walls; }
     }
 
 }
