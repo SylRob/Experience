@@ -13,7 +13,7 @@ export const Avatar = function( param:IAvatarParam ) {
     const ctx:CanvasRenderingContext2D = param.ctx;
 
     let position:IAvatarParam['position'] = param.position,
-        circleR = 10,
+        circleR = 60,
         positionIsDirty:boolean = true,
         force:IAvatarParam['position'] = {
             x: 0,
