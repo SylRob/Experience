@@ -29,8 +29,7 @@ export const Maze = () => {
                 mutateId: i,
                 wallBody: { col: (i % col), row: toRow },
                 wallCard:  [],
-                openedWall: '',
-                firstListed: false
+                generated: false
             })
             filterTbl.push(i);
 
@@ -42,8 +41,8 @@ export const Maze = () => {
 
     const generateMaze = ( filteredTbl:Array<number> ) => {
 
-        const tblInd = 0,
-        //const tblInd = Math.floor(Math.random() * filteredTbl.length),
+        //const tblInd = 0,
+        const tblInd = Math.floor(Math.random() * filteredTbl.length),
               tblVal = tbl[filteredTbl[tblInd]],
               cardinalRand = filterCardinalArr( tblVal );
 
@@ -51,15 +50,16 @@ export const Maze = () => {
 
         filteredTbl.splice( tblInd, 1 );
 
-        if( filteredTbl.length == 0 ){ console.log( tbl ); return getWall(walls); }
+        if( filteredTbl.length == 0 ){
+            console.log( tbl );
+            return getWall(walls);
+        }
         else return generateMaze( filteredTbl );
     }// generateMaze
 
     function getWall( arr:Array<Bodies> ) {
         tbl.map( (line) => {
             let pos = line.wallBody;
-
-            if( line.serial == 1 ) console.log( 'wall num 1', line.wallCard );
 
             if( line.wallCard.indexOf('n') != -1 )
                 arr.push( Bodies.rectangle( (pos.col*fullRad) + (fullRad/2), (pos.row*fullRad) - 1, fullRad, 2, { isStatic: true, render:{ fillStyle: '#FFFFFF' } }) );
@@ -76,52 +76,42 @@ export const Maze = () => {
     }// getWall
 
     function filterCardinalArr( line ) {
-        let serial = line.serial;
-        let wallCard = new Array();
-        let allowCard;
-        let res;
+        let serial = line.serial,
+            allowCard = new Array(),
+            otherLine,
+            res;
 
-        // first line
-        if( (serial - 1) < col || tbl[serial - col].openedWall == 's' ) wallCard.push('n');
-        //last line
-        else if( serial > (tbl.length - 1) - col || tbl[serial + col].openedWall == 'n' ) wallCard.push('s');
+        ['n', 'w', 's', 'e'].map((card)=>{
+            switch(card) {
+                case 'n':
+                    otherLine = tbl[ serial - col ];
+                    if( otherLine && ( otherLine.mutateId != line.mutateId || !otherLine.generated ) ) allowCard.push('n');
+                break;
+                case 'w':
+                    otherLine = serial % col !== 0 ? tbl[ serial - 1 ]: false;
+                    if( otherLine && ( otherLine.mutateId != line.mutateId || !otherLine.generated ) ) allowCard.push('w');
+                break;
+                case 's':
+                    otherLine = tbl[ serial + col ];
+                    if( otherLine && ( otherLine.mutateId != line.mutateId || !otherLine.generated ) ) allowCard.push('s');
+                break;
+                case 'e':
+                    otherLine = (serial + 1) % col !== 0 || serial == 0 ? tbl[ serial + 1 ]: false;
+                    if( otherLine && ( otherLine.mutateId != line.mutateId || !otherLine.generated ) ) allowCard.push('e');
+                break;
+            }
+        });
 
-        //any line first case
-        if( serial == 0 || serial % col === 0 || tbl[serial - 1].openedWall.openedWall == 'e' ) wallCard.push('w');
-        //any line last case
-        else if( (serial+2) % col === 0 || tbl[serial + 1].openedWall == 'w'  ) wallCard.push('e');
+        line.generated = true;
 
-        console.log( 'filterCardinalArr before filter', serial, wallCard );
+        let rand = Math.floor(Math.random() * allowCard.length);
+        res = allowCard[rand];
 
-        allowCard =
-            [ 'n', 's', 'w',  'e' ].filter( (card) => {
-                if( serial == 1 ) console.log( card, line.firstListed, line.wallCard.indexOf(card) == -1, wallCard.indexOf(card) != -1, line.wallCard );
-                //already filtered once and not in the list already OR in the scene wall list -> then false
-                if( (line.firstListed && line.wallCard.indexOf(card) == -1) || wallCard.indexOf(card) != -1  ) return false;
-                else return true;
-            });
+        allowCard.splice( rand, 1 );
 
         line.wallCard = allowCard;
 
-        if( allowCard.length > 0 ) {
-            //remove one randomly
-            var rand = Math.floor(Math.random() * allowCard.length);
-
-            res = allowCard[rand];
-            line.wallCard.splice( line.wallCard.indexOf(allowCard[rand]), 1 );
-        } else res = '';
-
-
-        console.log(
-            'filterCardinalArr after filter',
-            line.firstListed,
-            line.wallCard,
-            wallCard,
-            res
-        );
-
-        line.firstListedline = true;
-        line.openedWall = res;
+        console.log( 'new filter arr', serial, tbl[serial] );
 
         return res;
     }
@@ -130,8 +120,6 @@ export const Maze = () => {
         let toMutate:number,
             nextSerial:number,
             oposite:string;
-
-        console.log( 'mutate cells', cardinal, serial, mutateId, col );
 
         switch(cardinal) {
             case 'n':
@@ -146,7 +134,6 @@ export const Maze = () => {
             break;
             case 's':
                 nextSerial = serial + col;
-                console.log( nextSerial, tbl );
                 toMutate = tbl[nextSerial].mutateId;
                 oposite = 'n';
             break;
@@ -157,17 +144,21 @@ export const Maze = () => {
             break;
         }
 
-        tbl.map((obj)=>{
+        console.log( 'mutate cells', cardinal, serial, mutateId, toMutate, nextSerial );
+        var founded = false;
+        tbl = tbl.map((obj)=>{
             if( obj.mutateId == toMutate ) obj.mutateId = mutateId;
-            //if( obj.serial == nextSerial && obj.wallCard.indexOf(oposite) != -1 ) { obj.wallCard.splice( obj.wallCard.indexOf(oposite), 1 ); }
             if( obj.serial == nextSerial && obj.wallCard.indexOf(oposite) != -1 ) {
-                obj.wallCard.slice( obj.wallCard.indexOf(oposite), 1 );
-                obj.firstListed = true;
-                console.log('FOUNNDED', tbl);
+                obj.wallCard.splice( obj.wallCard.indexOf(oposite), 1 );
+                founded = true;
+                console.log( 'fouuunnndede', obj.wallCard );
             }
-            //if( obj.serial == 0 || obj.serial == col || serial == 1  ) { console.log(serial, obj.wallCard, nextSerial, 'tttrrrragettett', oposite ) }
+
+            return obj;
 
         });
+
+        if( founded ) console.log( 'final Arr', tbl[nextSerial] );
 
     }
 
