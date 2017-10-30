@@ -36,7 +36,7 @@ export const MainController = function( canv:CanvasRenderingContext2D, window:an
         );
     }
 
-    function resStart() {
+    async function resStart() {
 
         scene.destroy();
         scene.init( ctx );
@@ -45,7 +45,8 @@ export const MainController = function( canv:CanvasRenderingContext2D, window:an
 
 
         scene.addAvatar( avatar.getBody() );
-        scene.addToWorld( maze.generateMaze() );
+        let walls = await maze.generateMaze();
+        scene.addToWorld( walls );
     }
 
     function resize(event:Event) {
