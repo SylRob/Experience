@@ -124,6 +124,7 @@ export const SplashScreen = function(paren:HTMLElement, canvas:HTMLCanvasElement
                     <button
                         style="
                         color:#FFFFFF;
+                        border:0;background-color:transparent;
                         font-size: 50px;
                         "
                     class="noFS">
@@ -133,6 +134,7 @@ export const SplashScreen = function(paren:HTMLElement, canvas:HTMLCanvasElement
                     <button
                         style="
                         color:#FFFFFF;
+                        border:0;background-color:transparent;
                         font-size:
                         50px;"
                         class="doFS">YES
