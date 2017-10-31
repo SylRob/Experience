@@ -24,7 +24,6 @@ export const Avatar = function( param:IAvatarParam ) {
         body;
 
     const init = () => {
-        console.log( 'avatar init', circleR );
         body = Bodies.circle(position.x + (circleR*2), position.y + (circleR/2), circleR, { render: { fillStyle: '#FFFFFF' } });
     }
 

@@ -29,7 +29,6 @@ export const Maze = () => {
             caseSize.h = h / row;
         }
 
-        console.log( 'setCaseSize', w, h, row, col, caseSize, mazeW > mazeH );
     }
 
     const init = (w:number, h:number, colMax) => {
@@ -210,7 +209,7 @@ export const Maze = () => {
         init: (w, h, coll)=>init(w, h, coll),
         generateMaze: ()=> { generateMaze(filterTbl); return walls; },
         getMazeCases: ()=>tbl,
-        getSquareSize: ()=>caseSize
+        getCaseSize: ()=>caseSize
     }
 
 }

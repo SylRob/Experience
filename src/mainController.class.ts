@@ -1,3 +1,4 @@
+import { Bodies } from 'matter-js';
 import { Avatar } from './avatar.class';
 import { Scene } from './scene.class';
 import { Maze } from './maze.class';
@@ -10,14 +11,11 @@ export const MainController = function( canv:CanvasRenderingContext2D, window:an
               ctx:ctx,
               position: { x:0, y:0 }
           }),
-          maze = Maze();
-    let col = 14;
+          maze = Maze(),
+          scene = Scene();
 
-    let size = {
-        w: 0,
-        h: 0
-    }
-    const scene = Scene();
+    let col = 14,
+        caseSize: { w:number, h:number };
 
     function init() {
         events();
@@ -42,10 +40,9 @@ export const MainController = function( canv:CanvasRenderingContext2D, window:an
 
         maze.init( ctx.canvas.width, ctx.canvas.height, col );
 
-        let squareSize = maze.getSquareSize();
+        caseSize = maze.getCaseSize();
 
-        console.log( 'resStart', squareSize.w < squareSize.h ? squareSize.w - 10 : squareSize.h - 10, squareSize );
-        avatar.setSize( squareSize.w < squareSize.h ? squareSize.w - 10 : squareSize.h - 10 );
+        avatar.setSize( caseSize.w < caseSize.h ? caseSize.w - 10 : caseSize.h - 10 );
         avatar.init();
 
 
@@ -53,14 +50,23 @@ export const MainController = function( canv:CanvasRenderingContext2D, window:an
         let walls = await maze.generateMaze();
         scene.addToWorld( walls );
 
-        setGoal();
+        setFinishElement();
     }
 
-    function setGoal() {
+    function setFinishElement() {
 
         const cases = maze.getMazeCases(),
               lastCase = cases[ cases.length - 1 ];
 
+        var finishElem = Bodies.rectangle(
+            (caseSize.w * lastCase.wallBody.col) + (caseSize.w/2),
+            (caseSize.h * lastCase.wallBody.row) + (caseSize.h/2),
+            caseSize.w - 10,
+            caseSize.h - 10,
+            { render: { fillStyle: '#FF0000' } }
+        );
+
+        scene.addToWorld( finishElem );
     }
 
     function resize(event:Event) {
