@@ -39,13 +39,14 @@ export const MainController = function( canv:CanvasRenderingContext2D, window:an
 
         scene.destroy();
         scene.init( ctx );
-        avatar.init();
 
         maze.init( ctx.canvas.width, ctx.canvas.height, col );
 
         let squareSize = maze.getSquareSize();
-        
+
+        console.log( 'resStart', squareSize.w < squareSize.h ? squareSize.w - 10 : squareSize.h - 10, squareSize );
         avatar.setSize( squareSize.w < squareSize.h ? squareSize.w - 10 : squareSize.h - 10 );
+        avatar.init();
 
 
         scene.addAvatar( avatar.getBody() );
