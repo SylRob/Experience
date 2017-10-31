@@ -6,18 +6,33 @@ export const Maze = () => {
           mazeH:number,
           col:number,
           row:number,
-          fullRad:number,
+          caseSize:{w:number, h:number},
           tbl = new Array(),
           filterTbl = new Array(),
           walls:Array<Bodies> = new Array();
 
-    const init = (r:number, w:number, h:number) => {
-
+    function setCaseSize( w, h, colMax ) {
         mazeW = w;
         mazeH = h;
-        fullRad = (r*2) + 10;
-        col = Math.floor(mazeW/fullRad),
-        row = Math.floor(mazeH/fullRad);
+
+        if( mazeW > mazeH ){
+            col = colMax,
+            row = Math.round(mazeH/(w/col)),
+            caseSize = caseSize || { w:0, h:0 },
+            caseSize.w = w / colMax,
+            caseSize.h = h / row;
+        } else {
+            row = colMax,
+            col = Math.round(mazeW/(h/row)),
+            caseSize = caseSize || { w:0, h:0 },
+            caseSize.w = w / col,
+            caseSize.h = h / colMax;
+        }
+    }
+
+    const init = (w:number, h:number, colMax) => {
+
+        setCaseSize( w, h, colMax );
 
         let toRow = 0;
         for (let i = 0; i < (col*row); i++) {
@@ -30,7 +45,6 @@ export const Maze = () => {
                 generated: false
             })
             filterTbl.push(i);
-
 
             if( i % col == col - 1 ) toRow++;
         }
@@ -64,16 +78,16 @@ export const Maze = () => {
             let pos = line.wallBody;
 
             if( line.wallCard.indexOf('n') != -1 ) {
-                arr.push( Bodies.rectangle( (pos.col*fullRad) + (fullRad/2), (pos.row*fullRad) - 1, fullRad, 2, { isStatic: true, render:{ fillStyle: '#00FFFF' } }) );
+                arr.push( Bodies.rectangle( (pos.col*caseSize.w) + (caseSize.w/2), (pos.row*caseSize.h) - 1, caseSize.w, 2, { isStatic: true, render:{ fillStyle: '#00FFFF' } }) );
             }
             if( line.wallCard.indexOf('w') != -1 ) {
-                arr.push( Bodies.rectangle( (pos.col*fullRad) - 1, (pos.row*fullRad) + (fullRad/2), 2, fullRad, { isStatic: true, render:{ fillStyle: '#00FFFF' } }) );
+                arr.push( Bodies.rectangle( (pos.col*caseSize.w) - 1, (pos.row*caseSize.h) + (caseSize.h/2), 2, caseSize.h, { isStatic: true, render:{ fillStyle: '#00FFFF' } }) );
             }
             if( line.wallCard.indexOf('s') != -1 ) {
-                arr.push( Bodies.rectangle( (pos.col*fullRad) + (fullRad/2), ((pos.row+1)*fullRad) - 1, fullRad, 2, { isStatic: true, render:{ fillStyle: '#00FFFF' } }) );
+                arr.push( Bodies.rectangle( (pos.col*caseSize.w) + (caseSize.w/2), ((pos.row+1)*caseSize.h) - 1, caseSize.w, 2, { isStatic: true, render:{ fillStyle: '#00FFFF' } }) );
             }
             if( line.wallCard.indexOf('e') != -1 ) {
-                arr.push( Bodies.rectangle( ((pos.col+1)*fullRad) - 1, (pos.row*fullRad) + (fullRad/2), 2, fullRad, { isStatic: true, render:{ fillStyle: '#00FFFF' } }) );
+                arr.push( Bodies.rectangle( ((pos.col+1)*caseSize.w) - 1, (pos.row*caseSize.h) + (caseSize.h/2), 2, caseSize.h, { isStatic: true, render:{ fillStyle: '#00FFFF' } }) );
             }
 
         });
@@ -191,8 +205,10 @@ export const Maze = () => {
     }
 
     return {
-        init: (r, w, h)=>init(r, w, h),
-        generateMaze: ()=> { generateMaze(filterTbl); return walls; }
+        init: (w, h, coll)=>init(w, h, coll),
+        generateMaze: ()=> { generateMaze(filterTbl); return walls; },
+        getMazeCases: ()=>tbl,
+        getSquareSize: ()=>caseSize
     }
 
 }

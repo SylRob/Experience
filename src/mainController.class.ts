@@ -11,6 +11,7 @@ export const MainController = function( canv:CanvasRenderingContext2D, window:an
               position: { x:0, y:0 }
           }),
           maze = Maze();
+    let col = 14;
 
     let size = {
         w: 0,
@@ -39,12 +40,25 @@ export const MainController = function( canv:CanvasRenderingContext2D, window:an
         scene.destroy();
         scene.init( ctx );
         avatar.init();
-        maze.init( avatar.getAvatarRadius(), ctx.canvas.width, ctx.canvas.height );
+
+        maze.init( ctx.canvas.width, ctx.canvas.height, col );
+
+        let squareSize = maze.getSquareSize();
+        avatar.setSize( squareSize.w < squareSize.h ? squareSize.w - 10 : squareSize.h - 10 );
 
 
         scene.addAvatar( avatar.getBody() );
         let walls = await maze.generateMaze();
         scene.addToWorld( walls );
+
+        setGoal();
+    }
+
+    function setGoal() {
+
+        const cases = maze.getMazeCases(),
+              lastCase = cases[ cases.length - 1 ];
+
     }
 
     function resize(event:Event) {
@@ -55,6 +69,14 @@ export const MainController = function( canv:CanvasRenderingContext2D, window:an
     function draw() {
 
         window.requestAnimationFrame(draw);
+    }
+
+    const reset = () => {
+        scene.destroy();
+    }
+
+    return {
+        reset
     }
 
 }

@@ -24,13 +24,18 @@ export const Avatar = function( param:IAvatarParam ) {
         body;
 
     const init = () => {
-        body = Bodies.circle(position.x + (circleR/2), position.y + (circleR/2), circleR, { render: { fillStyle: '#FFFFFF' } });
+        body = Bodies.circle(position.x + (circleR*2), position.y + (circleR/2), circleR, { render: { fillStyle: '#FFFFFF' } });
+    }
+
+    const setSize = ( size:number ) => {
+        circleR = size/2;
     }
 
     return {
         init:()=>init(),
-        getAvatarRadius: () => circleR,
-        getBody: () => body
+        getAvatarRadius:() => circleR,
+        getBody:() => body,
+        setSize:(s) => setSize(s)
     }
 
 }
