@@ -50,7 +50,7 @@ export const Maze = () => {
 
             if( filteredTbl.length == 0 ) {
 
-                if( finalLoops() ) { console.log( tbl ) ;walls = getWall(walls); }
+                if( finalLoops() ) { walls = getWall(walls); }
 
                 return resolve();
             }
@@ -62,8 +62,6 @@ export const Maze = () => {
 
         tbl.map( (line) => {
             let pos = line.wallBody;
-
-            if( line.serial == tbl.length - 1 ) console.log( 'final last line', line, line.wallCard.indexOf('s') != -1 );
 
             if( line.wallCard.indexOf('n') != -1 ) {
                 arr.push( Bodies.rectangle( (pos.col*fullRad) + (fullRad/2), (pos.row*fullRad) - 1, fullRad, 2, { isStatic: true, render:{ fillStyle: '#00FFFF' } }) );
@@ -120,8 +118,6 @@ export const Maze = () => {
         let rand = Math.floor(Math.random() * allowCard.length);
         res = allowCard[rand];
 
-        if( serial == tbl.length - 1 ) console.log( serial, line, res, tbl[ serial + col ], (serial + 1) % col );
-
         allowCard.splice( rand, 1 );
 
         line.wallCard = allowCard;
@@ -158,8 +154,6 @@ export const Maze = () => {
                 oposite = 'w';
             break;
         }
-
-        if( nextSerial == tbl.length - 1 ) console.log( 'last mutate', oposite );
 
         tbl = tbl.map((obj)=>{
             if( obj.mutateId == toMutate ) { obj.mutateId = mutateId; }
