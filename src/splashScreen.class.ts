@@ -120,9 +120,27 @@ export const SplashScreen = function(paren:HTMLElement, canvas:HTMLCanvasElement
 
             elem.innerHTML = `
                 <h2>Go to fullscreen ?</h2>
-                <p><a href="#" class="noFS">NO</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" class="doFS">YES</a></p>
+                <p>
+                    <button
+                        style="
+                        color:#FFFFFF;
+                        font-size: 50px;
+                        "
+                    class="noFS">
+                        NO
+                    </button>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <button
+                        style="
+                        color:#FFFFFF;
+                        font-size:
+                        50px;"
+                        class="doFS">YES
+                    </button>
+                </p>
             `;
             elem.style.cssText = 'position:absolute;\
+            width:100%;\
             top:50%;\
             left:50%;\
             z-index: 2;\
