@@ -15,21 +15,21 @@ export const Maze = () => {
         mazeW = w;
         mazeH = h;
 
-        console.log( 'setCaseSize', w, h, colMax, mazeW, mazeH, mazeW > mazeH );
-
         if( mazeW > mazeH ){
             col = colMax,
             row = Math.round(mazeH/(w/col)),
             caseSize = caseSize || { w:0, h:0 },
-            caseSize.w = w / colMax,
+            caseSize.w = w / col,
             caseSize.h = h / row;
         } else {
             row = colMax,
             col = Math.round(mazeW/(h/row)),
             caseSize = caseSize || { w:0, h:0 },
             caseSize.w = w / col,
-            caseSize.h = h / colMax;
+            caseSize.h = h / row;
         }
+
+        console.log( 'setCaseSize', w, h, row, col, caseSize, mazeW > mazeH );
     }
 
     const init = (w:number, h:number, colMax) => {
