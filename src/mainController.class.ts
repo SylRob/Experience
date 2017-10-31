@@ -44,7 +44,7 @@ export const MainController = function( canv:CanvasRenderingContext2D, window:an
         maze.init( ctx.canvas.width, ctx.canvas.height, col );
 
         let squareSize = maze.getSquareSize();
-        console.log( 'resStart', squareSize, squareSize.w < squareSize.h, window.innerWidth, col );
+        
         avatar.setSize( squareSize.w < squareSize.h ? squareSize.w - 10 : squareSize.h - 10 );
 
 

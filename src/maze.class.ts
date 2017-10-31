@@ -15,6 +15,8 @@ export const Maze = () => {
         mazeW = w;
         mazeH = h;
 
+        console.log( 'setCaseSize', w, h, colMax, mazeW, mazeH, mazeW > mazeH );
+
         if( mazeW > mazeH ){
             col = colMax,
             row = Math.round(mazeH/(w/col)),
