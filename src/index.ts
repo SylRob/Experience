@@ -2,25 +2,28 @@ import { MainController } from './mainController.class';
 import { Device } from './device.class';
 import { SplashScreen } from './splashScreen.class';
 
+interface HTMLCanvasElement {
+    exitFullscreen: any;
+    mozCancelFullScreen: any;
+    webkitExitFullscreen: any;
+    requestFullScreen: any;
+    mozRequestFullScreen: any;
+    webkitRequestFullScreen: any;
+}
+
 (function(window) {
 
     const device = Device(window);
-    const splashScreen = SplashScreen(document.body);
-    const canvasElem:HTMLCanvasElement = <HTMLCanvasElement>document.getElementById('mycanvas');
+    const canvasElem:any = <any>document.getElementById('mycanvas');
+    const splashScreen = SplashScreen(document.body, canvasElem);
 
     splashScreen.detectDevice()
-    .then((value)=> {
-        splashScreen.toFade();
-
-        const type =
-        value == 'touch' ?
-            'gyro' :
-        value == 'click' ?
-            'keyboard' :
-            null;
-
-        device.init( type );
+    .then(( deviceType )=>{
+        let formatedDeviceType:'gyro'|'keyboard' = deviceType == 'click' ? 'keyboard' :
+                                    deviceType == 'touch' ? 'gyro' : 'keyboard';
+        device.init( formatedDeviceType );
         MainController( canvasElem.getContext("2d"), window, device );
-    });
+    })
+
 
 })(window)

@@ -20,9 +20,7 @@ export const MainController = function( canv:CanvasRenderingContext2D, window:an
 
     function init() {
         events();
-        goToFullScreen();
         resStart();
-
         //window.requestAnimationFrame(draw);
     }
     //auto load
@@ -50,43 +48,13 @@ export const MainController = function( canv:CanvasRenderingContext2D, window:an
     }
 
     function resize(event:Event) {
-        resStart();
+        //resStart();
     }
 
 
     function draw() {
 
         window.requestAnimationFrame(draw);
-    }
-
-    function goToFullScreen() {
-        const button = document.createElement('button');
-
-        button.innerHTML = 'Full screen';
-        button.style.cssText = 'position:fixed;\
-        bottom:10px;\
-        right:10px;\
-        border: 4px solid #DDDDDD;\
-        background-color: #FFFFFF;\
-        z-index: 60;\
-        font-family: Verdana;\
-        padding: 5px;\
-        font-size: 12px;';
-
-        document.body.appendChild( button );
-
-        button.addEventListener('touchstart', fullScreen);
-        button.addEventListener('click', fullScreen);
-    }
-
-    function fullScreen() {
-        var canvas = <any>document.getElementById(canv.canvas.getAttribute('id'));
-        if(canvas.requestFullScreen)
-            canvas.requestFullScreen();
-        else if(canvas.webkitRequestFullScreen)
-            canvas.webkitRequestFullScreen();
-        else if(canvas.mozRequestFullScreen)
-            canvas.mozRequestFullScreen();
     }
 
 }
