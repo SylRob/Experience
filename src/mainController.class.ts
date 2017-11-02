@@ -1,3 +1,4 @@
+import { Bodies, Events } from 'matter-js';
 import { Avatar } from './avatar.class';
 import { Scene } from './scene.class';
 import { Maze } from './maze.class';
@@ -10,18 +11,24 @@ export const MainController = function( canv:CanvasRenderingContext2D, window:an
               ctx:ctx,
               position: { x:0, y:0 }
           }),
-          maze = Maze();
-    let col = 14;
+          maze = Maze(),
+          scene = Scene(),
+          stages = [
+              7,
+              12,
+              16,
+              24
+          ];
 
-    let size = {
-        w: 0,
-        h: 0
-    }
-    const scene = Scene();
+    let caseSize: { w:number, h:number },
+        lastElem:Bodies,
+        actualStage = 0;
 
     function init() {
-        events();
+        scene.init( ctx );
+
         resStart();
+        events();
         //window.requestAnimationFrame(draw);
     }
     //auto load
@@ -33,19 +40,20 @@ export const MainController = function( canv:CanvasRenderingContext2D, window:an
         ["fullscreenchange", "webkitfullscreenchange", "mozfullscreenchange", "msfullscreenchange", "resize"].forEach(
             eventName => document.addEventListener(eventName, resize, false)
         );
+
+        Events.on(scene.getEngine(), "collisionStart", collisionHandeler)
     }
 
     async function resStart() {
 
         scene.destroy();
-        scene.init( ctx );
 
-        maze.init( ctx.canvas.width, ctx.canvas.height, col );
+        console.log( 'resStart', actualStage, stages[actualStage] );
+        maze.init( ctx.canvas.width, ctx.canvas.height, stages[actualStage] );
 
-        let squareSize = maze.getSquareSize();
+        caseSize = maze.getCaseSize();
 
-        console.log( 'resStart', squareSize.w < squareSize.h ? squareSize.w - 10 : squareSize.h - 10, squareSize );
-        avatar.setSize( squareSize.w < squareSize.h ? squareSize.w - 10 : squareSize.h - 10 );
+        avatar.setSize( caseSize.w < caseSize.h ? caseSize.w - 10 : caseSize.h - 10 );
         avatar.init();
 
 
@@ -53,24 +61,51 @@ export const MainController = function( canv:CanvasRenderingContext2D, window:an
         let walls = await maze.generateMaze();
         scene.addToWorld( walls );
 
-        setGoal();
+        setFinishElement();
     }
 
-    function setGoal() {
+    function setFinishElement() {
 
         const cases = maze.getMazeCases(),
               lastCase = cases[ cases.length - 1 ];
 
+        lastElem = Bodies.rectangle(
+            (caseSize.w * lastCase.wallBody.col) + (caseSize.w/2),
+            (caseSize.h * lastCase.wallBody.row) + (caseSize.h/2),
+            caseSize.w - 10,
+            caseSize.h - 10,
+            {
+                isSensor: true,
+                isStatic: true,
+                render: { fillStyle: '#FF0000' },
+                label: 'Goal Block'
+            }
+        );
+
+        scene.addToWorld( lastElem );
     }
 
     function resize(event:Event) {
         //resStart();
     }
 
+    function collisionHandeler(data) {
+        data.pairs.map(( pair )=>{
+            if( pair.bodyA == lastElem || pair.bodyB == lastElem ) endOfStage();
+        });
+    }
 
     function draw() {
 
         window.requestAnimationFrame(draw);
+    }
+
+    const endOfStage = () => {
+
+        actualStage = actualStage == stages.length - 1 ?
+            0 :
+            actualStage+1;
+        resStart();
     }
 
     const reset = () => {
@@ -78,7 +113,7 @@ export const MainController = function( canv:CanvasRenderingContext2D, window:an
     }
 
     return {
-        reset
+        reset: reset
     }
 
 }

@@ -78,6 +78,7 @@ export const Scene = function() {
     return {
         init: (ctx) => init(ctx),
         getWorld: () => world,
+        getEngine: () => engine,
         setGravity: (data:{x:number, y:number})=>setGravity(data, world, gravity),
         addToWorld: (b)=>addToWorld(b),
         addAvatar: (a)=>addAvatar(a),

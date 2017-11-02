@@ -29,14 +29,16 @@ export const Maze = () => {
             caseSize.h = h / row;
         }
 
-        console.log( 'setCaseSize', w, h, row, col, caseSize, mazeW > mazeH );
     }
 
     const init = (w:number, h:number, colMax) => {
 
         setCaseSize( w, h, colMax );
+        walls = new Array();
 
         let toRow = 0;
+        tbl = new Array();
+
         for (let i = 0; i < (col*row); i++) {
 
             tbl.push({
@@ -54,6 +56,7 @@ export const Maze = () => {
 
 
     const generateMaze = ( filteredTbl:Array<number> ):Promise<any> => {
+
         return new Promise( (resolve, reject) => {
             //const tblInd = 0,
             const tblInd = Math.floor(Math.random() * filteredTbl.length),
@@ -70,7 +73,7 @@ export const Maze = () => {
 
                 return resolve();
             }
-            else return generateMaze( filteredTbl );
+            else{ return generateMaze( filteredTbl ); }
         });//end of promise
     }// generateMaze
 
@@ -202,7 +205,7 @@ export const Maze = () => {
         })
 
         if( arr.length > 0 ){ generateMaze( arr ); }
-        else return true;
+        else { return true;}
 
     }
 
@@ -210,7 +213,7 @@ export const Maze = () => {
         init: (w, h, coll)=>init(w, h, coll),
         generateMaze: ()=> { generateMaze(filterTbl); return walls; },
         getMazeCases: ()=>tbl,
-        getSquareSize: ()=>caseSize
+        getCaseSize: ()=>caseSize
     }
 
 }
