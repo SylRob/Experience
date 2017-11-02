@@ -1,4 +1,4 @@
-import { Bodies, Events } from 'matter-js';
+import { Bodies, Events, Composite } from 'matter-js';
 import { Avatar } from './avatar.class';
 import { Scene } from './scene.class';
 import { Maze } from './maze.class';
@@ -16,23 +16,23 @@ export const MainController = function( canv:CanvasRenderingContext2D, window:an
           stages = [
               7,
               12,
-              16,
+              18,
               24
           ];
 
     let caseSize: { w:number, h:number },
         lastElem:Bodies,
-        actualStage = 0;
+        actualStage = 0,
+        levelOver;
 
-    function init() {
+    function init( levelOverFn ) {
         scene.init( ctx );
 
+        levelOver = levelOverFn;
         resStart();
         events();
         //window.requestAnimationFrame(draw);
     }
-    //auto load
-    init();
 
     function events() {
         device.newPositionEvent( (data)=> scene.setGravity( data ) );
@@ -53,15 +53,15 @@ export const MainController = function( canv:CanvasRenderingContext2D, window:an
 
         caseSize = maze.getCaseSize();
 
+        setFinishElement();
+
         avatar.setSize( caseSize.w < caseSize.h ? caseSize.w - 10 : caseSize.h - 10 );
         avatar.init();
-
 
         scene.addAvatar( avatar.getBody() );
         let walls = await maze.generateMaze();
         scene.addToWorld( walls );
 
-        setFinishElement();
     }
 
     function setFinishElement() {
@@ -69,18 +69,33 @@ export const MainController = function( canv:CanvasRenderingContext2D, window:an
         const cases = maze.getMazeCases(),
               lastCase = cases[ cases.length - 1 ];
 
-        lastElem = Bodies.rectangle(
-            (caseSize.w * lastCase.wallBody.col) + (caseSize.w/2),
-            (caseSize.h * lastCase.wallBody.row) + (caseSize.h/2),
-            caseSize.w - 10,
-            caseSize.h - 10,
-            {
-                isSensor: true,
-                isStatic: true,
-                render: { fillStyle: '#FF0000' },
-                label: 'Goal Block'
-            }
-        );
+        lastElem = Composite.create();
+        Composite.add(lastElem, [
+            Bodies.rectangle(
+                (caseSize.w * lastCase.wallBody.col) + (caseSize.w/2),
+                (caseSize.h * lastCase.wallBody.row) + (caseSize.h/2),
+                caseSize.w - 10,
+                caseSize.h - 10,
+                {
+                    isSensor: true,
+                    isStatic: true,
+                    render: { fillStyle: '#FF0000' },
+                    label: 'Goal Block'
+                }
+            ),
+            Bodies.rectangle(
+                (caseSize.w * lastCase.wallBody.col) + (caseSize.w/2),
+                (caseSize.h * lastCase.wallBody.row) + (caseSize.h/2),
+                caseSize.w/5,
+                caseSize.h/5,
+                {
+                    isSensor: true,
+                    isStatic: true,
+                    render: { fillStyle: '#000000' },
+                    label: 'Sensor Block'
+                }
+            )
+        ]);
 
         scene.addToWorld( lastElem );
     }
@@ -90,8 +105,9 @@ export const MainController = function( canv:CanvasRenderingContext2D, window:an
     }
 
     function collisionHandeler(data) {
+        let lastBlockSensor = Composite.allBodies(lastElem)[1];
         data.pairs.map(( pair )=>{
-            if( pair.bodyA == lastElem || pair.bodyB == lastElem ) endOfStage();
+            if( pair.bodyA == lastBlockSensor || pair.bodyB == lastBlockSensor ) endOfStage();
         });
     }
 
@@ -102,10 +118,18 @@ export const MainController = function( canv:CanvasRenderingContext2D, window:an
 
     const endOfStage = () => {
 
-        actualStage = actualStage == stages.length - 1 ?
-            0 :
-            actualStage+1;
-        resStart();
+        if( actualStage + 1 != stages.length ) {
+            levelOver();
+            actualStage += 1;
+            resStart();
+            scene.pause();
+            setTimeout(()=>{
+                scene.resume()
+            }, 3000)
+        } else {
+            levelOver();
+        }
+
     }
 
     const reset = () => {
@@ -113,7 +137,8 @@ export const MainController = function( canv:CanvasRenderingContext2D, window:an
     }
 
     return {
-        reset: reset
+        reset: reset,
+        init: (fn)=>init(fn)
     }
 
 }
