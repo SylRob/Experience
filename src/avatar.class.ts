@@ -32,11 +32,16 @@ export const Avatar = function( param:IAvatarParam ) {
         circleR = size/2;
     }
 
+    const setPosition = ( pos:{ x:number, y:number } ) => {
+        position = pos;
+    }
+
     return {
         init:()=>init(),
         getAvatarRadius:() => circleR,
         getBody:() => body,
-        setSize:(s) => setSize(s)
+        setSize:(s) => setSize(s),
+        setPosition: ( pos )=>setPosition( pos )
     }
 
 }

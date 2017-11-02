@@ -1,4 +1,4 @@
-import { Bodies } from 'matter-js';
+import { Bodies, Events } from 'matter-js';
 import { Avatar } from './avatar.class';
 import { Scene } from './scene.class';
 import { Maze } from './maze.class';
@@ -12,14 +12,23 @@ export const MainController = function( canv:CanvasRenderingContext2D, window:an
               position: { x:0, y:0 }
           }),
           maze = Maze(),
-          scene = Scene();
+          scene = Scene(),
+          stages = [
+              7,
+              12,
+              16,
+              24
+          ];
 
-    let col = 14,
-        caseSize: { w:number, h:number };
+    let caseSize: { w:number, h:number },
+        lastElem:Bodies,
+        actualStage = 0;
 
     function init() {
-        events();
+        scene.init( ctx );
+
         resStart();
+        events();
         //window.requestAnimationFrame(draw);
     }
     //auto load
@@ -31,14 +40,16 @@ export const MainController = function( canv:CanvasRenderingContext2D, window:an
         ["fullscreenchange", "webkitfullscreenchange", "mozfullscreenchange", "msfullscreenchange", "resize"].forEach(
             eventName => document.addEventListener(eventName, resize, false)
         );
+
+        Events.on(scene.getEngine(), "collisionStart", collisionHandeler)
     }
 
     async function resStart() {
 
         scene.destroy();
-        scene.init( ctx );
 
-        maze.init( ctx.canvas.width, ctx.canvas.height, col );
+        console.log( 'resStart', actualStage, stages[actualStage] );
+        maze.init( ctx.canvas.width, ctx.canvas.height, stages[actualStage] );
 
         caseSize = maze.getCaseSize();
 
@@ -58,25 +69,43 @@ export const MainController = function( canv:CanvasRenderingContext2D, window:an
         const cases = maze.getMazeCases(),
               lastCase = cases[ cases.length - 1 ];
 
-        var finishElem = Bodies.rectangle(
+        lastElem = Bodies.rectangle(
             (caseSize.w * lastCase.wallBody.col) + (caseSize.w/2),
             (caseSize.h * lastCase.wallBody.row) + (caseSize.h/2),
             caseSize.w - 10,
             caseSize.h - 10,
-            { render: { fillStyle: '#FF0000' } }
+            {
+                isSensor: true,
+                isStatic: true,
+                render: { fillStyle: '#FF0000' },
+                label: 'Goal Block'
+            }
         );
 
-        scene.addToWorld( finishElem );
+        scene.addToWorld( lastElem );
     }
 
     function resize(event:Event) {
         //resStart();
     }
 
+    function collisionHandeler(data) {
+        data.pairs.map(( pair )=>{
+            if( pair.bodyA == lastElem || pair.bodyB == lastElem ) endOfStage();
+        });
+    }
 
     function draw() {
 
         window.requestAnimationFrame(draw);
+    }
+
+    const endOfStage = () => {
+
+        actualStage = actualStage == stages.length - 1 ?
+            0 :
+            actualStage+1;
+        resStart();
     }
 
     const reset = () => {
@@ -84,7 +113,7 @@ export const MainController = function( canv:CanvasRenderingContext2D, window:an
     }
 
     return {
-        reset
+        reset: reset
     }
 
 }
