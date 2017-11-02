@@ -22,8 +22,13 @@ interface HTMLCanvasElement {
         let formatedDeviceType:'gyro'|'keyboard' = deviceType == 'click' ? 'keyboard' :
                                     deviceType == 'touch' ? 'gyro' : 'keyboard';
         device.init( formatedDeviceType );
-        MainController( canvasElem.getContext("2d"), window, device );
-    })
+        const main = MainController( canvasElem.getContext("2d"), window, device );
+        main.init( levelOverFn );
+    });
+
+    function levelOverFn() {
+        alert('finished');
+    }
 
 
 })(window)

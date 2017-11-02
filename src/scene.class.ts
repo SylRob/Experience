@@ -7,7 +7,9 @@ export const Scene = function() {
           engine:Engine,
           world:World,
           avatar:Bodies,
-          gravity;
+          gravity,
+          render,
+          runner;
 
     const init = ( canv:CanvasRenderingContext2D ) => {
 
@@ -18,7 +20,7 @@ export const Scene = function() {
         world = engine.world;
         gravity = world.gravity;
 
-        const render = Render.create({
+        render = Render.create({
             canvas: ctx.canvas,
             engine: engine,
             options: {
@@ -28,7 +30,7 @@ export const Scene = function() {
                 width: window.innerWidth,
                 height: window.innerHeight
             }
-        }),
+        });
         // create runner
         runner = Runner.create();
 
@@ -75,6 +77,14 @@ export const Scene = function() {
         }
     }
 
+    const pause = () => {
+        Render.stop( render );
+    }
+
+    const resume = () => {
+        Render.run( render );
+    }
+
     return {
         init: (ctx) => init(ctx),
         getWorld: () => world,
@@ -82,7 +92,9 @@ export const Scene = function() {
         setGravity: (data:{x:number, y:number})=>setGravity(data, world, gravity),
         addToWorld: (b)=>addToWorld(b),
         addAvatar: (a)=>addAvatar(a),
-        destroy: ()=>destroy()
+        destroy: destroy,
+        pause: pause,
+        resume: resume
     }
 
 
