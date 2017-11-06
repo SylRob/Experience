@@ -27,7 +27,7 @@ interface HTMLCanvasElement {
     });
 
     function levelOverFn() {
-        alert('finished');
+        //alert('finished');
     }
 
 

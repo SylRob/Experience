@@ -1,4 +1,4 @@
-import { Engine, Render, Runner, Composites, Common, MouseConstraint, Mouse, World, Bodies } from 'matter-js';
+import { Engine, Render, Runner, Composites, Common, MouseConstraint, Mouse, World, Bodies, Body } from 'matter-js';
 
 
 export const Scene = function() {
@@ -7,6 +7,7 @@ export const Scene = function() {
           engine:Engine,
           world:World,
           avatar:Bodies,
+          isListenning:boolean,
           gravity,
           render,
           runner;
@@ -15,6 +16,7 @@ export const Scene = function() {
 
         // create engine
         ctx = canv;
+        isListenning = true;
 
         engine = Engine.create();
         world = engine.world;
@@ -52,9 +54,10 @@ export const Scene = function() {
         ]);
     }
 
-    const addAvatar = (avatar:Bodies) => {
+    const addAvatar = (avatar:Bodies, position: { x:number, y:number }) => {
         avatar = avatar;
         World.add(world, [avatar]);
+        Body.setPosition(avatar, position );
     }
 
     const addToWorld = ( bodies:Array<Bodies> ) => {
@@ -62,6 +65,7 @@ export const Scene = function() {
     }
 
     const setGravity = ( data:{x:number, y:number}, world, gravity ) => {
+        if( !isListenning ) return false;
         gravity.x = data.x;
         gravity.y = data.y;
     }
@@ -78,11 +82,18 @@ export const Scene = function() {
     }
 
     const pause = () => {
+        isListenning = false;
         Render.stop( render );
     }
 
     const resume = () => {
+        isListenning = true;
         Render.run( render );
+    }
+
+    const resetGravity = () => {
+        gravity.x = 0;
+        gravity.y = 0;
     }
 
     return {
@@ -91,7 +102,8 @@ export const Scene = function() {
         getEngine: () => engine,
         setGravity: (data:{x:number, y:number})=>setGravity(data, world, gravity),
         addToWorld: (b)=>addToWorld(b),
-        addAvatar: (a)=>addAvatar(a),
+        addAvatar: (a, p)=>addAvatar(a, p),
+        resetGravity: resetGravity,
         destroy: destroy,
         pause: pause,
         resume: resume
