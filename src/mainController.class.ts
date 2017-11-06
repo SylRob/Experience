@@ -2,6 +2,7 @@ import { Bodies, Events, Composite } from 'matter-js';
 import { Avatar } from './avatar.class';
 import { Scene } from './scene.class';
 import { Maze } from './maze.class';
+import { LevelAnimation } from './levelAnimation.class';
 
 
 export const MainController = function( canv:CanvasRenderingContext2D, window:any, device ) {
@@ -11,24 +12,24 @@ export const MainController = function( canv:CanvasRenderingContext2D, window:an
               ctx:ctx,
               position: { x:0, y:0 }
           }),
+          levelAnimation = LevelAnimation(ctx),
           maze = Maze(),
           scene = Scene(),
           stages = [
               7,
               12,
-              18,
               24
           ];
 
     let caseSize: { w:number, h:number },
         lastElem:Bodies,
         actualStage = 0,
-        levelOver;
+        gameOver;
 
-    function init( levelOverFn ) {
+    function init( gameOverFn ) {
         scene.init( ctx );
 
-        levelOver = levelOverFn;
+        gameOver = gameOverFn;
         resStart();
         events();
         //window.requestAnimationFrame(draw);
@@ -48,7 +49,6 @@ export const MainController = function( canv:CanvasRenderingContext2D, window:an
 
         scene.destroy();
 
-        console.log( 'resStart', actualStage, stages[actualStage] );
         maze.init( ctx.canvas.width, ctx.canvas.height, stages[actualStage] );
 
         caseSize = maze.getCaseSize();
@@ -57,9 +57,12 @@ export const MainController = function( canv:CanvasRenderingContext2D, window:an
 
         avatar.setSize( caseSize.w < caseSize.h ? caseSize.w - 10 : caseSize.h - 10 );
         avatar.init();
+        avatar.setPosition( { x: caseSize.w/2, y: caseSize.h/2 } )
 
-        scene.addAvatar( avatar.getBody() );
         let walls = await maze.generateMaze();
+
+        scene.addAvatar( avatar.getBody(), avatar.getPosition() );
+
         scene.addToWorld( walls );
 
     }
@@ -116,18 +119,19 @@ export const MainController = function( canv:CanvasRenderingContext2D, window:an
         window.requestAnimationFrame(draw);
     }
 
-    const endOfStage = () => {
-
+    const endOfStage = async () => {
         if( actualStage + 1 != stages.length ) {
-            levelOver();
             actualStage += 1;
-            resStart();
             scene.pause();
-            setTimeout(()=>{
-                scene.resume()
-            }, 3000)
+            await levelAnimation.endOfStageAnimation(avatar.getPosition(), avatar.getSize(), avatar.getColor(), 'Stage ' + (actualStage+1));
+            scene.resetGravity();
+            resStart();
+            await levelAnimation.newStageAnimation(avatar.getPosition(), avatar.getSize(), avatar.getColor());
+            scene.resume()
         } else {
-            levelOver();
+            scene.pause();
+            await levelAnimation.endOfStageAnimation(avatar.getPosition(), avatar.getSize(), avatar.getColor(), 'GAME OVER');
+            gameOver();
         }
 
     }

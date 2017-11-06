@@ -1,4 +1,4 @@
-import { Bodies } from 'matter-js';
+import { Bodies, Body } from 'matter-js';
 
 interface IAvatarParam {
 
@@ -14,6 +14,7 @@ export const Avatar = function( param:IAvatarParam ) {
 
     let position:IAvatarParam['position'] = param.position,
         circleR = 20,
+        color:string = '#FFFFFF',
         positionIsDirty:boolean = true,
         force:IAvatarParam['position'] = {
             x: 0,
@@ -23,8 +24,8 @@ export const Avatar = function( param:IAvatarParam ) {
         world,
         body;
 
-    const init = () => {
-        body = Bodies.circle(position.x + (circleR*2), position.y + (circleR/2), circleR, { render: { fillStyle: '#FFFFFF' } });
+    const init = ( colorPar = '#FFFFFF' ) => {
+        body = Bodies.circle(position.x + (circleR*2), position.y + (circleR/2), circleR, { render: { fillStyle: colorPar || color } });
     }
 
     const setSize = ( size:number ) => {
@@ -34,14 +35,20 @@ export const Avatar = function( param:IAvatarParam ) {
 
     const setPosition = ( pos:{ x:number, y:number } ) => {
         position = pos;
+        Body.setPosition( body, position );
     }
+
+    const getPosition = () =>  body.position;
 
     return {
         init:()=>init(),
         getAvatarRadius:() => circleR,
         getBody:() => body,
         setSize:(s) => setSize(s),
-        setPosition: ( pos )=>setPosition( pos )
+        setPosition: ( pos )=>setPosition( pos ),
+        getPosition: ()=>JSON.parse(JSON.stringify(getPosition())),
+        getSize: ()=>circleR,
+        getColor: ()=>color
     }
 
 }
