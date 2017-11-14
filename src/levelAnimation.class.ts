@@ -19,7 +19,7 @@ export const LevelAnimation = (ctxParam:CanvasRenderingContext2D) => {
             text = textParam;
             isAnimating = true;
             await loop();
-            
+
             return resolve();
         })
     }
@@ -67,7 +67,7 @@ export const LevelAnimation = (ctxParam:CanvasRenderingContext2D) => {
 
 
         //cercle Animation
-        let diag = Math.sqrt(Math.pow(ctx.canvas.width, 2) + Math.pow(ctx.canvas.height, 2));
+        let diag = Math.sqrt(Math.pow(ctx.canvas.width, 2) + Math.pow(ctx.canvas.height, 2)) + 50;//50 for the change from browser to fullscreen
         if( percentage / .3 <= 1 ) {
             newSize = (percentage / .3) * (diag - size);
 

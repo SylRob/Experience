@@ -2,6 +2,8 @@ import { Bodies } from 'matter-js';
 
 export const Maze = () => {
 
+    const dafaultCategory = 0x0002;
+
     let   mazeW:number,
           mazeH:number,
           col:number,
@@ -83,16 +85,24 @@ export const Maze = () => {
             let pos = line.wallBody;
 
             if( line.wallCard.indexOf('n') != -1 ) {
-                arr.push( Bodies.rectangle( (pos.col*caseSize.w) + (caseSize.w/2), (pos.row*caseSize.h) - 1, caseSize.w, 2, { isStatic: true, render:{ fillStyle: '#00FFFF' } }) );
+                arr.push( Bodies.rectangle( (pos.col*caseSize.w) + (caseSize.w/2), (pos.row*caseSize.h) - 1, caseSize.w, 2, {
+                    isStatic: true, render:{ fillStyle: '#00FFFF' }, collisionFilter: { mask: dafaultCategory }
+                }) );
             }
             if( line.wallCard.indexOf('w') != -1 ) {
-                arr.push( Bodies.rectangle( (pos.col*caseSize.w) - 1, (pos.row*caseSize.h) + (caseSize.h/2), 2, caseSize.h, { isStatic: true, render:{ fillStyle: '#00FFFF' } }) );
+                arr.push( Bodies.rectangle( (pos.col*caseSize.w) - 1, (pos.row*caseSize.h) + (caseSize.h/2), 2, caseSize.h, {
+                    isStatic: true, render:{ fillStyle: '#00FFFF' }, collisionFilter: { mask: dafaultCategory }
+                }) );
             }
             if( line.wallCard.indexOf('s') != -1 ) {
-                arr.push( Bodies.rectangle( (pos.col*caseSize.w) + (caseSize.w/2), ((pos.row+1)*caseSize.h) - 1, caseSize.w, 2, { isStatic: true, render:{ fillStyle: '#00FFFF' } }) );
+                arr.push( Bodies.rectangle( (pos.col*caseSize.w) + (caseSize.w/2), ((pos.row+1)*caseSize.h) - 1, caseSize.w, 2, {
+                     isStatic: true, render:{ fillStyle: '#00FFFF' }, collisionFilter: { mask: dafaultCategory }
+                 }) );
             }
             if( line.wallCard.indexOf('e') != -1 ) {
-                arr.push( Bodies.rectangle( ((pos.col+1)*caseSize.w) - 1, (pos.row*caseSize.h) + (caseSize.h/2), 2, caseSize.h, { isStatic: true, render:{ fillStyle: '#00FFFF' } }) );
+                arr.push( Bodies.rectangle( ((pos.col+1)*caseSize.w) - 1, (pos.row*caseSize.h) + (caseSize.h/2), 2, caseSize.h, {
+                    isStatic: true, render:{ fillStyle: '#00FFFF' }, collisionFilter: { mask: dafaultCategory }
+                }) );
             }
 
         });
