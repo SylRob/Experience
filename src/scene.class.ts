@@ -12,6 +12,8 @@ export const Scene = function() {
           render,
           runner;
 
+    const defaultColisionId = 0x0002;
+
     const init = ( canv:CanvasRenderingContext2D ) => {
 
         // create engine
@@ -47,15 +49,16 @@ export const Scene = function() {
 
     const addWalls = () => {
         World.add(world, [
-            Bodies.rectangle(ctx.canvas.width/2, 0, ctx.canvas.width, 5, { isStatic: true, render:{ fillStyle: '#FFFFFF' } }),
-            Bodies.rectangle(ctx.canvas.width, ctx.canvas.height/2, 5, ctx.canvas.height, { isStatic: true, render:{ fillStyle: '#FFFFFF' } }),
-            Bodies.rectangle(ctx.canvas.width/2, ctx.canvas.height, ctx.canvas.width, 5, { isStatic: true, render:{ fillStyle: '#FFFFFF' } }),
-            Bodies.rectangle(0, ctx.canvas.height/2, 5, ctx.canvas.height, { isStatic: true, render:{ fillStyle: '#FFFFFF' } })
+            Bodies.rectangle(ctx.canvas.width/2, 0, ctx.canvas.width, 5, { isStatic: true, render:{ fillStyle: '#FFFFFF', collisionFilter: { mask: defaultColisionId } } }),
+            Bodies.rectangle(ctx.canvas.width, ctx.canvas.height/2, 5, ctx.canvas.height, { isStatic: true, render:{ fillStyle: '#FFFFFF', collisionFilter: { mask: defaultColisionId } } }),
+            Bodies.rectangle(ctx.canvas.width/2, ctx.canvas.height, ctx.canvas.width, 5, { isStatic: true, render:{ fillStyle: '#FFFFFF', collisionFilter: { mask: defaultColisionId } } }),
+            Bodies.rectangle(0, ctx.canvas.height/2, 5, ctx.canvas.height, { isStatic: true, render:{ fillStyle: '#FFFFFF', collisionFilter: { mask: defaultColisionId } } })
         ]);
     }
 
     const addAvatar = (avatar:Bodies, position: { x:number, y:number }) => {
         avatar = avatar;
+        avatar.render.collisionFilter = { category: defaultColisionId };
         World.add(world, [avatar]);
         Body.setPosition(avatar, position );
     }
@@ -106,7 +109,8 @@ export const Scene = function() {
         resetGravity: resetGravity,
         destroy: destroy,
         pause: pause,
-        resume: resume
+        resume: resume,
+        getDefaultCollisionId: defaultColisionId
     }
 
 

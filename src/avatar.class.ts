@@ -10,7 +10,6 @@ interface IAvatarParam {
 
 export const Avatar = function( param:IAvatarParam ) {
 
-    const dafaultCategory = 0x0002;
     const ctx:CanvasRenderingContext2D = param.ctx;
 
     let position:IAvatarParam['position'] = param.position,
@@ -26,7 +25,7 @@ export const Avatar = function( param:IAvatarParam ) {
         body;
 
     const init = ( colorPar = '#FFFFFF' ) => {
-        body = Bodies.circle(position.x + (circleR*2), position.y + (circleR/2), circleR, { render: { fillStyle: colorPar || color }, collisionFilter: { category: dafaultCategory } });
+        body = Bodies.circle(position.x + (circleR*2), position.y + (circleR/2), circleR, { render: { fillStyle: colorPar || color } });
     }
 
     const setSize = ( size:number ) => {

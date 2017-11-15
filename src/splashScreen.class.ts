@@ -17,7 +17,8 @@ export const SplashScreen = function(paren:HTMLElement, canvas:HTMLCanvasElement
 
     let deviceType:string = null,
         detectorListener:Array<any> = [],
-        mainWrapper:HTMLElement;
+        mainWrapper:HTMLElement,
+        isClicable:Boolean = true;
 
     const addElem = (elem:HTMLElement, elemClassName:string):HTMLElement => {
         mainWrapper = document.createElement('div');
@@ -71,7 +72,7 @@ export const SplashScreen = function(paren:HTMLElement, canvas:HTMLCanvasElement
             detectorListener.map( (listener)=> {
                 elem.addEventListener(
                     listener.name,
-                    listener.func
+                    ()=> isClicable ? listener.func() : null
                 )
             })
 
@@ -84,7 +85,8 @@ export const SplashScreen = function(paren:HTMLElement, canvas:HTMLCanvasElement
 
     const toFade = ( elem:HTMLElement ) => {
 
-        TweenLite.to(elem, 0.2, { autoAlpha: 0 });
+        isClicable = false;
+        TweenLite.to(elem, 0.2, { autoAlpha: 0, onComplete:()=>isClicable=true });
 
         detectorListener.map( (listener)=> {
             elem.removeEventListener(
