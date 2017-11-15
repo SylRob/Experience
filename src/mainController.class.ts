@@ -13,10 +13,10 @@ export const MainController = function( canv:CanvasRenderingContext2D, window:an
               position: { x:0, y:0 }
           }),
           levelAnimation = LevelAnimation(ctx),
-          maze = Maze(),
           scene = Scene(),
+          maze = Maze( scene.getDefaultCollisionId ),
           stages = [
-              7,
+              4,
               12,
               24
           ];
@@ -126,8 +126,9 @@ export const MainController = function( canv:CanvasRenderingContext2D, window:an
             await levelAnimation.endOfStageAnimation(avatar.getPosition(), avatar.getSize(), avatar.getColor(), 'Stage ' + (actualStage+1));
             scene.resetGravity();
             resStart();
+            scene.resume();
             await levelAnimation.newStageAnimation(avatar.getPosition(), avatar.getSize(), avatar.getColor());
-            scene.resume()
+
         } else {
             scene.pause();
             await levelAnimation.endOfStageAnimation(avatar.getPosition(), avatar.getSize(), avatar.getColor(), 'GAME OVER');
