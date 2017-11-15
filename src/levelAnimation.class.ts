@@ -3,8 +3,6 @@ export const LevelAnimation = (ctxParam:CanvasRenderingContext2D) => {
 
     const ctx:CanvasRenderingContext2D = ctxParam;
     const animationTiming = 2000;
-    let isAnimating = false;
-    let timeStampStart:number = 0;
     let position:{ x:number, y:number }
     let size:number;
     let color:string;
@@ -17,8 +15,7 @@ export const LevelAnimation = (ctxParam:CanvasRenderingContext2D) => {
             position = positionParam;
             color = colorParam;
             text = textParam;
-            isAnimating = true;
-            await loop();
+            await loop( updateCirc(false), animationTiming );
 
             return resolve();
         })
@@ -29,21 +26,37 @@ export const LevelAnimation = (ctxParam:CanvasRenderingContext2D) => {
             position = positionParam;
             size = sizeParam;
             color = colorParam;
-            isAnimating = true;
-            await loop(true);
+            await loop( updateCirc(true), animationTiming );
+            await loop( revealStage, animationTiming/2 );
 
             return resolve();
         })
     }
 
-    function loop(reversed = false) {
+    const revealStage = function(perc:number) {
+        const diag = Math.sqrt(Math.pow(ctx.canvas.width, 2) + Math.pow(ctx.canvas.height, 2)) + 50;//50 for the change from browser to fullscreen
+        const newSize = 1 - perc < 0 ? 0 : parseInt(((1 - perc) * (diag * 2)).toFixed(3));
+        
+        ctx.save();
+        ctx.moveTo(position.x,position.y);
+        ctx.beginPath();
+        ctx.strokeStyle = '#000000';
+        ctx.lineWidth=newSize;
+        ctx.arc(position.x,position.y,diag,0,Math.PI*2, false); // outer (filled)
+        ctx.stroke();
+        ctx.restore();
 
+    }
+
+    function loop( animFunc:Function, animationTiming:number ) {
+        let timeStampStart = 0;
+        let isAnimating = true;
         return new Promise( (resolve, reject) => {
             function step(timeStamp:number) {
                 if( timeStampStart === 0 ){ timeStampStart = timeStamp; }
 
                 const perc = (timeStamp - timeStampStart)/animationTiming;
-                updateCirc( perc, reversed );
+                animFunc( perc );
 
                 if( perc >= 1 ) { isAnimating = false; timeStampStart = 0; }
 
@@ -55,45 +68,45 @@ export const LevelAnimation = (ctxParam:CanvasRenderingContext2D) => {
         })
     }
 
-    function updateCirc( perc:number, reversed:boolean ) {
-        let newSize;
+    function updateCirc( reversedParam:boolean ) {
+        const reversed = reversedParam;
 
-        const percentage = reversed ? 1 - perc : perc;
+        return function( perc:number ) {
+                let newSize;
+                const percentage = reversed ? 1 - perc : perc;
 
+                if( percentage / .3 > .8 || reversed ) {
+                    ctx.clearRect(0,0,ctx.canvas.width,ctx.canvas.height);
+                }
 
-        if( percentage / .3 > .8 || reversed ) {
-            ctx.clearRect(0,0,ctx.canvas.width,ctx.canvas.height);
-        }
+                //cercle Animation
+                const diag = Math.sqrt(Math.pow(ctx.canvas.width, 2) + Math.pow(ctx.canvas.height, 2)) + 50;//50 for the change from browser to fullscreen
+                if( percentage / .3 <= 1 ) {
+                    newSize = (percentage / .3) * (diag - size);
 
+                    if( reversed ) newSize = newSize < size ? size : newSize;
 
-        //cercle Animation
-        let diag = Math.sqrt(Math.pow(ctx.canvas.width, 2) + Math.pow(ctx.canvas.height, 2)) + 50;//50 for the change from browser to fullscreen
-        if( percentage / .3 <= 1 ) {
-            newSize = (percentage / .3) * (diag - size);
+                    ctx.clearRect(position.x,position.y,newSize,newSize);
+                } else {
+                    newSize = reversed ? diag : size;
+                }
 
-            if( reversed ) newSize = newSize < size ? size : newSize;
+                ctx.save();
 
-            ctx.clearRect(position.x,position.y,newSize,newSize);
-        } else {
-            newSize = reversed ? diag : size;
-        }
+                if( reversed ) { ctx.beginPath(); }
+                ctx.fillStyle = color;
+                ctx.arc(position.x,position.y,newSize,0,2*Math.PI);
+                ctx.fill();
+                ctx.restore();
 
-        ctx.save();
-
-        if( reversed ) { ctx.beginPath(); }
-        ctx.fillStyle = color;
-        ctx.arc(position.x,position.y,newSize,0,2*Math.PI);
-        ctx.fill();
-        ctx.restore();
-
-        if( percentage / .3 > .8 ) {
-            let opa = (percentage - (1 / 3)) / .3;
-            ctx.font = "30px Verdana";
-            ctx.fillStyle = `rgba( 0, 0, 0, ${opa} )`;
-            ctx.textAlign = "center";
-            ctx.fillText(text, ctx.canvas.width/2, ctx.canvas.height/2);
-        }
-
+                if( percentage / .3 > .8 ) {
+                    let opa = (percentage - (1 / 3)) / .3;
+                    ctx.font = "30px Verdana";
+                    ctx.fillStyle = `rgba( 0, 0, 0, ${opa} )`;
+                    ctx.textAlign = "center";
+                    ctx.fillText(text, ctx.canvas.width/2, ctx.canvas.height/2);
+                }
+            }
     }
 
     return {
