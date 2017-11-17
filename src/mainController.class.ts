@@ -1,4 +1,3 @@
-import { Bodies, Events, Composite } from 'matter-js';
 import { Avatar } from './avatar.class';
 import { Scene } from './scene.class';
 import { Maze } from './maze.class';
@@ -14,35 +13,39 @@ export const MainController = function( canv:CanvasRenderingContext2D, window:an
           }),
           levelAnimation = LevelAnimation(ctx),
           scene = Scene(),
-          maze = Maze( scene.getDefaultCollisionId ),
+          maze = Maze(),
           stages = [
-              4,
+              7,
               12,
               24
           ];
 
     let caseSize: { w:number, h:number },
-        lastElem:Bodies,
+        lastElem,
         actualStage = 0,
         gameOver;
 
     function init( gameOverFn ) {
+
+        ctx.canvas.width = window.innerWidth;
+        ctx.canvas.height = window.innerHeight;
         scene.init( ctx );
 
         gameOver = gameOverFn;
+        scene.setAvatar( avatar );
+
         resStart();
         events();
-        //window.requestAnimationFrame(draw);
+
+        scene.resume();
     }
 
     function events() {
         device.newPositionEvent( (data)=> scene.setGravity( data ) );
 
         ["fullscreenchange", "webkitfullscreenchange", "mozfullscreenchange", "msfullscreenchange", "resize"].forEach(
-            eventName => document.addEventListener(eventName, resize, false)
+            eventName => window.addEventListener(eventName, resize, false)
         );
-
-        Events.on(scene.getEngine(), "collisionStart", collisionHandeler)
     }
 
     async function resStart() {
@@ -60,9 +63,7 @@ export const MainController = function( canv:CanvasRenderingContext2D, window:an
         avatar.setPosition( { x: caseSize.w/2, y: caseSize.h/2 } )
 
         let walls = await maze.generateMaze();
-
-        scene.addAvatar( avatar.getBody(), avatar.getPosition() );
-
+        console.log( walls.length );
         scene.addToWorld( walls );
 
     }
@@ -72,51 +73,27 @@ export const MainController = function( canv:CanvasRenderingContext2D, window:an
         const cases = maze.getMazeCases(),
               lastCase = cases[ cases.length - 1 ];
 
-        lastElem = Composite.create();
-        Composite.add(lastElem, [
-            Bodies.rectangle(
-                (caseSize.w * lastCase.wallBody.col) + (caseSize.w/2),
-                (caseSize.h * lastCase.wallBody.row) + (caseSize.h/2),
-                caseSize.w - 10,
-                caseSize.h - 10,
-                {
-                    isSensor: true,
-                    isStatic: true,
-                    render: { fillStyle: '#FF0000' },
-                    label: 'Goal Block'
-                }
-            ),
-            Bodies.rectangle(
-                (caseSize.w * lastCase.wallBody.col) + (caseSize.w/2),
-                (caseSize.h * lastCase.wallBody.row) + (caseSize.h/2),
-                caseSize.w/5,
-                caseSize.h/5,
-                {
-                    isSensor: true,
-                    isStatic: true,
-                    render: { fillStyle: '#000000' },
-                    label: 'Sensor Block'
-                }
-            )
-        ]);
+        lastElem = {
+                label: 'Goal Block',
+                position: {
+                    x: (caseSize.w * lastCase.wallBody.col) + 5,
+                    y: (caseSize.h * lastCase.wallBody.row) + 5,
+                },
+                size: {
+                    w: caseSize.w - 10,
+                    h: caseSize.h - 10,
+                },
+                isColidable: true
+            };
 
         scene.addToWorld( lastElem );
     }
 
-    function resize(event:Event) {
-        //resStart();
-    }
-
-    function collisionHandeler(data) {
-        let lastBlockSensor = Composite.allBodies(lastElem)[1];
-        data.pairs.map(( pair )=>{
-            if( pair.bodyA == lastBlockSensor || pair.bodyB == lastBlockSensor ) endOfStage();
-        });
-    }
-
-    function draw() {
-
-        window.requestAnimationFrame(draw);
+    function resize() {
+        ctx.canvas.width = window.innerWidth;
+        ctx.canvas.height = window.innerHeight;
+        resStart();
+        scene.resume();
     }
 
     const endOfStage = async () => {

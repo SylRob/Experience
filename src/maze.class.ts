@@ -1,8 +1,7 @@
-import { Bodies } from 'matter-js';
+import {ObjectType} from './objectType.interface';
 
-export const Maze = ( colisionFilterId ) => {
 
-    const defaultColisionCategory = colisionFilterId;
+export const Maze = () => {
 
     let   mazeW:number,
           mazeH:number,
@@ -11,7 +10,7 @@ export const Maze = ( colisionFilterId ) => {
           caseSize:{w:number, h:number},
           tbl = new Array(),
           filterTbl = new Array(),
-          walls:Array<Bodies> = new Array();
+          walls:Array<ObjectType> = new Array();
 
     function setCaseSize( w, h, colMax ) {
         mazeW = w;
@@ -60,6 +59,7 @@ export const Maze = ( colisionFilterId ) => {
     const generateMaze = ( filteredTbl:Array<number> ):Promise<any> => {
 
         return new Promise( (resolve, reject) => {
+
             //const tblInd = 0,
             const tblInd = Math.floor(Math.random() * filteredTbl.length),
                   tblVal = tbl[filteredTbl[tblInd]],
@@ -79,28 +79,51 @@ export const Maze = ( colisionFilterId ) => {
         });//end of promise
     }// generateMaze
 
-    function getWall( arr:Array<Bodies> ) {
+    function getWall( arr:Array<ObjectType> ) {
 
         tbl.map( (line) => {
-            let pos = line.wallBody;
+            const pos = line.wallBody;
+            let walls = [];
 
-            if( line.wallCard.indexOf('n') != -1 ) {
-                arr.push( Bodies.rectangle( (pos.col*caseSize.w) + (caseSize.w/2), (pos.row*caseSize.h) - 1, caseSize.w, 2, {
-                    isStatic: true, render:{ fillStyle: '#00FFFF', collisionFilter: { mask: defaultColisionCategory } } }) );
+
+            if( line.wallCard.indexOf('n') != -1 && pos.row != 0  ) {
+                walls.push({
+                    label: 'wall',
+                    size: { w:caseSize.w,h:2 },
+                    position: { x:pos.col*caseSize.w,y:(pos.row*caseSize.h) - 1 },
+                    color: '#00FFFF',
+                    isColidable: true
+                });
             }
-            if( line.wallCard.indexOf('w') != -1 ) {
-                arr.push( Bodies.rectangle( (pos.col*caseSize.w) - 1, (pos.row*caseSize.h) + (caseSize.h/2), 2, caseSize.h, {
-                    isStatic: true, render:{ fillStyle: '#00FFFF', collisionFilter: { mask: defaultColisionCategory } } }) );
+            if( line.wallCard.indexOf('w') != -1  && pos.col != 0) {
+                walls.push({
+                    label: 'wall',
+                    size: { w:2,h:caseSize.h },
+                    position: { x:(pos.col*caseSize.w) - 1,y:pos.row*caseSize.h },
+                    color: '#00FFFF',
+                    isColidable: true
+                });
             }
-            if( line.wallCard.indexOf('s') != -1 ) {
-                arr.push( Bodies.rectangle( (pos.col*caseSize.w) + (caseSize.w/2), ((pos.row+1)*caseSize.h) - 1, caseSize.w, 2, {
-                     isStatic: true, render:{ fillStyle: '#00FFFF', collisionFilter: { mask: defaultColisionCategory } }
-                 }) );
+            if( line.wallCard.indexOf('s') != -1 && pos.row != row-1 ) {
+                walls.push({
+                    label: 'wall',
+                    size: { w:caseSize.w,h:2 },
+                    position: { x:(pos.col*caseSize.w),y:((pos.row+1)*caseSize.h) - 1 },
+                    color: '#00FFFF',
+                    isColidable: true
+                });
             }
-            if( line.wallCard.indexOf('e') != -1 ) {
-                arr.push( Bodies.rectangle( ((pos.col+1)*caseSize.w) - 1, (pos.row*caseSize.h) + (caseSize.h/2), 2, caseSize.h, {
-                    isStatic: true, render:{ fillStyle: '#00FFFF', collisionFilter: { mask: defaultColisionCategory } } }) );
+            if( line.wallCard.indexOf('e') != -1 && pos.col != col-1 ) {
+                walls.push({
+                    label: 'wall',
+                    size: { w:2,h:caseSize.h },
+                    position: { x:((pos.col+1)*caseSize.w) - 1,y:(pos.row*caseSize.h) },
+                    color: '#00FFFF',
+                    isColidable: true
+                });
             }
+
+            if( walls.length > 0 ) arr.push(...walls);
 
         });
 

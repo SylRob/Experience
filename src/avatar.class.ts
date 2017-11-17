@@ -1,5 +1,3 @@
-import { Bodies, Body } from 'matter-js';
-
 interface IAvatarParam {
 
     ctx:CanvasRenderingContext2D;
@@ -15,35 +13,37 @@ export const Avatar = function( param:IAvatarParam ) {
     let position:IAvatarParam['position'] = param.position,
         circleR = 20,
         color:string = '#FFFFFF',
-        positionIsDirty:boolean = true,
         force:IAvatarParam['position'] = {
             x: 0,
             y: 0
         },
-        speedForceBase = 1,
-        world,
-        body;
+        speedForceBase = 1;
 
     const init = ( colorPar = '#FFFFFF' ) => {
-        body = Bodies.circle(position.x + (circleR*2), position.y + (circleR/2), circleR, { render: { fillStyle: colorPar || color } });
+        color = colorPar;
     }
 
     const setSize = ( size:number ) => {
-
         circleR = size/2;
     }
 
     const setPosition = ( pos:{ x:number, y:number } ) => {
         position = pos;
-        Body.setPosition( body, position );
     }
 
-    const getPosition = () =>  body.position;
+    const getPosition = () =>  position;
+
+    const draw = function() {
+        ctx.beginPath();
+        ctx.arc(position.x,position.y,circleR,0,2*Math.PI);
+        ctx.fillStyle=color;
+        ctx.fill();
+    }
 
     return {
         init:()=>init(),
+        draw:draw,
         getAvatarRadius:() => circleR,
-        getBody:() => body,
         setSize:(s) => setSize(s),
         setPosition: ( pos )=>setPosition( pos ),
         getPosition: ()=>JSON.parse(JSON.stringify(getPosition())),
